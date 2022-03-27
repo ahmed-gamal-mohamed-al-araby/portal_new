@@ -632,10 +632,11 @@ $name = 'name_' . $currentLanguage;
                                             <p style=" margin-bottom:0; font-size:13px">
                                                 {{ $timeline->{'AS_' . $name} }}
                                             </p>
-                                            <p style="font-size:10px; margin-bottom:0">    @if ($timeline->action_id == null)
+                                            <p style="font-size:10px; margin-bottom:0"> @if ($timeline->action_id == null || $timeline->action_id == $timeline->user_id )
+
                                         ({{ $timeline->{'U_' . $name} }})
                                     @else
-                                        {{App\Models\User::where("id",$timeline->action_id)->first()->name_ar}}
+                                    @lang("site.delegated")  :  {{App\Models\User::where("id",$timeline->action_id)->first()->name_ar}}
                                    @endif</p>
                                             <h6 class="text-success " style="margin-bottom:2px;font-size:9px;">
                                                 @if ($timeline->approval_status == 'P')

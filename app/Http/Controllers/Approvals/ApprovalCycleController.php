@@ -486,7 +486,6 @@ class ApprovalCycleController extends Controller
     public function showOrder($id, $value , $message)
 
     {
-
         $factory = 0;
         $approvalTimeline = ApprovalTimeline::find($id);
 
@@ -497,7 +496,7 @@ class ApprovalCycleController extends Controller
             ->join('approval_cycle_approval_steps', 'approval_cycle_approval_steps.id', '=', 'approval_timelines.approval_cycle_approval_step_id')
             ->join('approval_steps', 'approval_steps.id', '=', 'approval_cycle_approval_steps.approval_step_id')
             ->leftJoin('approval_timeline_comments', 'approval_timeline_comments.approval_timeline_id', '=', 'approval_timelines.id')
-            ->select('approval_steps.name_ar as AS_name_ar',  "approval_timelines.action_id" ,'approval_steps.name_en  as AS_name_en',  'users.name_ar as U_name_ar', 'users.name_en as U_name_en', 'approval_timelines.approval_status',
+            ->select('approval_steps.name_ar as AS_name_ar',  "approval_timelines.action_id" ,"approval_timelines.user_id" ,'approval_steps.name_en  as AS_name_en',  'users.name_ar as U_name_ar', 'users.name_en as U_name_en', 'approval_timelines.approval_status',
             'approval_timeline_comments.comment as comment','approval_timelines.created_at')
             ->selectRaw("MAX(approval_timelines.created_at) AS created_at")
             ->groupBy("approval_timelines.user_id")
@@ -865,8 +864,10 @@ class ApprovalCycleController extends Controller
     // Take revert action
     public function revert(Request $request)
     {
-        $id  = $request->approval_id;
+
+         $id  = $request->approval_id;
         $approveTime = ApprovalTimeline::with("approvalCycleApprovalStep")->where("id", $id)->first();
+        DB::beginTransaction();
         if($approveTime->user->sector) {
             if($approveTime->user->sector->name_en == "Business Development" && \Auth::user()->hasRole("super_admin")) {
                 $approveTime->update([
@@ -887,6 +888,7 @@ class ApprovalCycleController extends Controller
         }
 
         else if(auth()->user()->sector->name_en == "Business Development") {
+
             ApprovalTimeline::with("approvalCycleApprovalStep")->where("id", $id)->update([
                 'approval_status' => 'RV',
                 "action_id" => \Auth::user()->id
@@ -898,8 +900,8 @@ class ApprovalCycleController extends Controller
             ApprovalTimeline::where("business_action",3)->where("record_id",$approveTime->record_id)->update([
                 "business_action" => 0
             ]);
-        } else {
-            DB::beginTransaction();
+        }
+
             if ($approveTime->table_name == "purchase_requests") {
                 if ($approveTime->approvalCycleApprovalStep->previous_id == null) {
                     PurchaseRequest::where('id', $approveTime->record_id)->update([
@@ -911,7 +913,8 @@ class ApprovalCycleController extends Controller
                     'comment' => $request->comment,
                     'approval_timeline_id' => $id,
                 ]);
-            } else if ($approveTime->table_name == "purchase_orders") {
+        } else if ($approveTime->table_name == "purchase_orders") {
+
                 if ($approveTime->approvalCycleApprovalStep->previous_id == null) {
                     PurchaseOrder::where('id', $approveTime->record_id)->update([
                         'sent' => 0,
@@ -924,6 +927,7 @@ class ApprovalCycleController extends Controller
                     'approval_timeline_id' => $id,
                 ]);
             } else if ($approveTime->table_name == "cheque_requests") {
+
                 if ($approveTime->approvalCycleApprovalStep->previous_id == null) {
                     ChequeRequest::where('id', $approveTime->record_id)->update([
                         'sent' => 0,
@@ -936,12 +940,9 @@ class ApprovalCycleController extends Controller
                     'approval_timeline_id' => $id,
                 ]);
             }
-            DB::commit();
-            $approvalTimeline = ApprovalTimeline::where('id', $id)->firstOrFail();
+             $approvalTimeline = ApprovalTimeline::where('id', $id)->firstOrFail();
             $model = $this->getModelFromClassName($approvalTimeline->table_name);
             $creatorUser = $model::findOrFail($approvalTimeline->record_id)->requester;
-
-            DB::beginTransaction();
             try {
 
                 $currentApprovalCycleApprovalStep = $approvalTimeline->approvalCycleApprovalStep;
@@ -987,7 +988,7 @@ class ApprovalCycleController extends Controller
                 DB::rollBack();
                 $this->getError();
             }
-        }
+
 
         return redirect()->route('approvals.index');
     }
@@ -996,7 +997,7 @@ class ApprovalCycleController extends Controller
     public function reject(Request $request)
     {
         $id  = $request->approval_id;
-
+        DB::beginTransaction();
         ApprovalTimelineComment::create([
             'comment' => $request->comment,
             'approval_timeline_id' => $id,
@@ -1034,7 +1035,7 @@ class ApprovalCycleController extends Controller
             ApprovalTimeline::where("business_action",3)->where("record_id",$approvalTimeline->record_id)->update([
                 "business_action" => 0
             ]);
-        } else {
+        }
             if($approvalTimeline->table_name == "purchase_requests") {
                 PurchaseRequest::where("id",$approvalTimeline->record_id)->update([
                     "exist_comment" => 1
@@ -1051,8 +1052,8 @@ class ApprovalCycleController extends Controller
             $approvalTimeline->update([
                 'approval_status' => 'RJ'
             ]);
-        }
 
+    DB::commit();
 
         $this->getWarningMessage('rejected_successfully');
 

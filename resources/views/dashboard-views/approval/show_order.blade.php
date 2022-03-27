@@ -318,19 +318,60 @@ $name = 'name_' . $currentLanguage;
                 </div>
 
                 <div class="card-body">
+                    @php
+                        $approveltimeline = App\Models\ApprovalTimeline::where("record_id",$purchaseOrder->id)->where("approval_status","P")->first();
+                    @endphp
+                        {{-- Confirm modal --}}
+    <div class="modal fade text-center" id="confirm_modal{{ $approveltimeline->id}}" tabindex="-1" role="dialog"
+            aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modal-title">@lang('site.approval_approval_title')</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{route("approvals.action.approve.comment")}}" method="POST"  enctype="multipart/form-data">
+                            @csrf
 
+                            <textarea name="comment"  class="form-control mb-3"  id="modal-body" cols="30" rows="10" required></textarea>
+
+                            <input type="hidden" name="approval_id" id="approval_id" value="{{$approveltimeline->id}}">
+                            <button type="button" class="btn btn-outline-dark" data-dismiss="modal"> @lang('site.No') ,
+                                @lang('site.Cancel')</button>
+                            <button type="submit" class="btn btn-outline-dark"> @lang('site.Yes') , @lang('site.Approve') <span
+                                    id="action-btn-text"></span>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+
+
+                        {{-- Form to Trash department --}}
+
+                    </div>
+                </div>
+            </div>
+        </div>
                     @if ($value == 0)
                     <form action="{{ route('approve.order.items') }}" method="POST">
                         @csrf
                         <button type="submit" class="btn btn-success float-right">
                             <i class="fas fa-paper-plane"></i>
                         </button>
+
+                        <a data-approval_time="{{ $approveltimeline->id }}" data-type='approval' data-toggle="modal" data-target="#confirm_modal{{ $approveltimeline->id}}" class="btn btn-success" data-pur="purchase_requests" data-toggle="modal" tooltip="@lang('site.approve_comment')"><i class="fas fa-comment-dots"></i></a>
+
                         @elseif ($message == 3)
                         <form action="{{ route('approve.order.items.message') }}" method="POST">
                             @csrf
                             <button type="submit" class="btn btn-success float-right">
                                 <i class="fas fa-paper-plane"></i>
                             </button>
+                            <a data-approval_time="{{ $approveltimeline->id }}" data-type='approval' data-toggle="modal" data-target="#confirm_modal{{ $approveltimeline->id}}" class="btn btn-success" data-pur="purchase_requests" data-toggle="modal" tooltip="@lang('site.approve_comment')"><i class="fas fa-comment-dots"></i></a>
+
                             @else
                             <form action="" method="POST">
                                 @endif
@@ -608,10 +649,11 @@ $name = 'name_' . $currentLanguage;
                                             <p style=" margin-bottom:0; font-size:13px">
                                                 {{ $timeline->{'AS_' . $name} }}
                                             </p>
-                                            <p style="font-size:10px; margin-bottom:0">@if ($timeline->action_id == null)
+                                            <p style="font-size:10px; margin-bottom:0"> @if ($timeline->action_id == null || $timeline->action_id == $timeline->user_id )
+
                                                 ({{ $timeline->{'U_' . $name} }})
                                             @else
-                                               ( {{App\Models\User::where("id",$timeline->action_id)->first()->name_ar}})
+                                            @lang("site.delegated")  : ( {{App\Models\User::where("id",$timeline->action_id)->first()->name_ar}})
                                            @endif </p>
                                             <h6 class="text-success " style="margin-bottom:2px;font-size:9px;">
                                                 @if ($timeline->approval_status == 'P')

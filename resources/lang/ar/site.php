@@ -797,5 +797,6 @@ return [
     "business_development" => "تطوير الاعمال",
     "answer" => "رد",
     "answer_business" => "رد تطوير الاعمال",
-    "delegated_at" => " هل هو نائب ؟"
+    "delegated_at" => " هل هو نائب ؟",
+    "delegated" => "نائب عنه",
 ];

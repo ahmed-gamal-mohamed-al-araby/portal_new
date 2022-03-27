@@ -313,10 +313,11 @@ $name = 'name_' . $currentLanguage;
                                            @endphp
 
                                        </div>
+                                       {{ $approvalComment}} afew
                                        @if ($approvalComment)
-                                       @if ( $approvalComment->comment || $approvalComment->comment_approve)
-                                         <h5 class="alert alert-warning"> {{ $approvalComment->comment}}  {{ $approvalComment->comment_approve}} </h5>
-                                       @endif
+                                           @if ( $approvalComment->comment || $approvalComment->comment_approve)
+                                             <h5 class="alert alert-warning"> {{ $approvalComment->comment}}  {{ $approvalComment->comment_approve}} </h5>
+                                           @endif
                                        @endif
                                @endif
                         @endif
@@ -327,10 +328,10 @@ $name = 'name_' . $currentLanguage;
                             </h5>
 
                             <h5>
-                               @if ($timeline->action_id == null)
+                               @if ($timeline->action_id == null || $timeline->action_id == $timeline->user_id )
                                     ({{ $timeline->{'U_' . $name} }})
                                 @else
-                                    {{App\Models\User::where("id",$timeline->action_id)->first()->name_ar}}
+                                    @lang("site.delegated")  :  {{App\Models\User::where("id",$timeline->action_id)->first()->name_ar}}
                                @endif
                             </h5>
 
@@ -353,8 +354,15 @@ $name = 'name_' . $currentLanguage;
 
 
                             </div>
-                            @if ($timeline->comment)
-                            <h5 class="alert alert-warning">{{ $timeline->comment }}</h5>
+
+
+                            @if ($timeline->comment )
+                            <h5 class="alert alert-warning">{{ $timeline->comment }} </h5>
+
+                        @endif
+                        @if ($timeline->comment_approve)
+                        <h5 class="alert alert-success">{{ $timeline->comment_approve }} </h5>
+
                         @endif
                         @endif
 

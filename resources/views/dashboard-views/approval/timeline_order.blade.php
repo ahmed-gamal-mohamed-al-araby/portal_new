@@ -356,10 +356,12 @@ $name = 'name_' . $currentLanguage;
 
                                           </h5>
 
-                                          <h5>@if ($timeline->action_id == null)
+                                          <h5>
+                                            @if ($timeline->action_id == null || $timeline->action_id == $timeline->user_id )
+
                                             ({{ $timeline->{'U_' . $name} }})
                                         @else
-                                            {{App\Models\User::where("id",$timeline->action_id)->first()->name_ar}}
+                                        @lang("site.delegated")  :   {{App\Models\User::where("id",$timeline->action_id)->first()->name_ar}}
                                        @endif</h5>
 
                                             <h5>
