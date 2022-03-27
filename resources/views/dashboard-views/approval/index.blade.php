@@ -116,7 +116,7 @@ $name = 'name_' . $currentLanguage;
                             @endif
                         @endif
 
-                        <textarea name="comment"  class="form-control mb-3"  id="modal-body" cols="30" rows="10" required></textarea>
+                        <textarea name="comment"  class="form-control mb-3"  id="modal-body" cols="30" rows="10" ></textarea>
                         @if (auth()->user()->department)
                              @if (auth()->user()->department->name_en == "Civil Technical Office" ||
 
@@ -129,9 +129,8 @@ $name = 'name_' . $currentLanguage;
 
 
                         <input type="hidden" name="approval_id" id="approval_id" value="">
-                        <button type="button" class="btn btn-outline-dark" data-dismiss="modal"> @lang('site.No') ,
-                            @lang('site.Cancel')</button>
-                        <button type="submit" class="btn btn-outline-dark"> @lang('site.Yes') , @lang('site.Approve') <span
+                        <button type="button" class="btn btn-outline-dark" data-dismiss="modal"> @lang('site.cancel')   </button>
+                        <button type="submit" class="btn btn-outline-dark action_need" >  <span
                                 id="action-btn-text"></span>
                         </button>
                     </form>
@@ -202,6 +201,9 @@ $name = 'name_' . $currentLanguage;
             "{{ $currentLanguage == 'ar' ? '؟' : '?' }}";
         languages['delete_approval_url'] = "{{ route('country.trash') }}";
         languages['delete_approval_action_btn_text'] = "@lang('site.Delete')";
+        languages['revert'] = "@lang('site.Revert')";
+        languages['reject'] = "@lang('site.Reject')";
+        languages['approval'] = "@lang('site.Approve')";
 
         // End defining languages
         // Start include pagination script
@@ -229,6 +231,16 @@ $name = 'name_' . $currentLanguage;
                     $('.skip_stage').val("");
                     $(".approvalId").hide();
                 }
+
+                if(confirmModalType == "revert") {
+                    $(".action_need").text(languages['revert']);
+                } else if( confirmModalType == "reject") {
+                    $(".action_need").text(languages['reject']);
+                } else if( confirmModalType == "approval") {
+                    $(".action_need").text(languages['approval']);
+
+                }
+
 
                 console.log(pur);
                 $('#confirm_form').attr('action', "approvals/action/"+confirmModalType);

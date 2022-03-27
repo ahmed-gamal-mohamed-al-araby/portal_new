@@ -1450,7 +1450,7 @@ $currentLanguage = app()->getLocale();
                     {{-- reserved_quantity --}}
                             <div class="col mb-1 d-none mt-1 pl-md-0 pl-lg-1  ">
                                 <input type="number" name="reserved_quantity[]"
-                                    placeholder="@lang('site.reserved_quantity')"
+                                    placeholder="@lang('site.reserved_quantity')" title="@lang('site.reserved_quantity')"
                                     class="form-control " min=1
                                     value="{{ old('reserved_quantity') }}" />
                                 {{-- Validation --}}
@@ -1497,7 +1497,7 @@ $currentLanguage = app()->getLocale();
 
                             {{-- Quantity required --}}
                             <div class="col-md-3 mb-1 pl-md-0 pl-lg-1">
-                                <input type="number" name="quantities[]" placeholder="@lang('site.quantity_required')"
+                                <input type="number" name="quantities[]" placeholder="@lang('site.quantity_required')" title="@lang('site.quantity_required')"
                                     class="form-control qrtp" min=1 data-toggle="tooltip" data-placement="top"
                                     title="QTY Required" />
                                 {{-- Validation --}}
@@ -1509,7 +1509,7 @@ $currentLanguage = app()->getLocale();
 
                             {{-- Quantity in store --}}
                             <div class="col-md-3 mb-1 no-gutters">
-                                <input type="number" name="stock_quantities[]" min=0
+                                <input type="number" name="stock_quantities[]" min=0 title="@lang('site.quantity_in_store')"
                                     placeholder="@lang('site.quantity_in_store')" class="form-control qos"
                                     data-toggle="tooltip" data-placement="top" title="QTY On Store" />
                                 {{-- Validation --}}
@@ -1520,7 +1520,7 @@ $currentLanguage = app()->getLocale();
 
                             {{-- Actual quantity --}}
                             <div class="col-md-3 mb-1 no-gutters">
-                                <input type="number" name="actual_quantities[]" min=0
+                                <input type="number" name="actual_quantities[]" min=0 title="@lang('site.actual_quantity')"
                                     placeholder="@lang('site.actual_quantity')" class="form-control aqrtp" />
                                 {{-- Validation --}}
                                 <div class="text-danger d-none required-validate-error mb-3">

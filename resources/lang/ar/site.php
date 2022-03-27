@@ -787,9 +787,9 @@ return [
     "skip_stage" => "تخطي المرحله التاليه",
     "direct_consent" => "موافقة مباشره",
     "manager_approval" => "ارسال الي المدير العام للموافقه",
-    "purchase_out" => "شراء خارجي",
-    "purchase_in" => "شراء داخي",
-    "both" => "كلا ",
+    "purchase_out" => "مشتريات خارجيه",
+    "purchase_in" => "مشتريات داخليه",
+    "both" => "مشترك ",
     "approve_comment" => "موافق بتعليق",
     "send_business" => "ارسال الي Business Development",
     "show_notes" => "عرض الملاحظات",
@@ -799,4 +799,6 @@ return [
     "answer_business" => "رد تطوير الاعمال",
     "delegated_at" => " هل هو نائب ؟",
     "delegated" => "نائب عنه",
+    "cancel" => "الغاء",
+    
 ];

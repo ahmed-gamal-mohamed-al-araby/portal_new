@@ -313,7 +313,6 @@ $name = 'name_' . $currentLanguage;
                                            @endphp
 
                                        </div>
-                                       {{ $approvalComment}} afew
                                        @if ($approvalComment)
                                            @if ( $approvalComment->comment || $approvalComment->comment_approve)
                                              <h5 class="alert alert-warning"> {{ $approvalComment->comment}}  {{ $approvalComment->comment_approve}} </h5>

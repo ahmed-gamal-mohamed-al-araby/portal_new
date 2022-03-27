@@ -335,8 +335,42 @@ $name = 'name_' . $currentLanguage;
                     <div class="modal-body">
                         <form action="{{route("approvals.action.approve.comment")}}" method="POST"  enctype="multipart/form-data">
                             @csrf
+                            @if (auth()->user()->sector)
+                            @if (auth()->user()->sector->name_en == "Purchasing")
 
-                            <textarea name="comment"  class="form-control mb-3"  id="modal-body" cols="30" rows="10" required></textarea>
+                            <div class="row purchase_type_top approve_only">
+                                   <div class="col">
+                                        <label for="">@lang("site.purchase_out")</label>
+                                        <input type="radio" name="purchase_type" class="form-control purchase_type"  value="purchase_out">
+                                   </div>
+                                    <div class="col">
+                                          <label for="">@lang("site.purchase_in")</label>
+                                          <input type="radio"  checked name="purchase_type" class="form-control purchase_type" value="purchase_in">
+                                    </div>
+                                    <div class="col">
+                                          <label for="">@lang("site.both")</label>
+                                          <input type="radio"  name="purchase_type" class="form-control purchase_type" value="both">
+                                    </div>
+                                </div>
+
+
+                            <div class="d-flex approve_only">
+                               <div class="form-group">
+                                    <label for="">@lang("site.direct_consent")</label>
+                                    <input type="radio" name="skip_stage"   class="form-control skip_stage"  value="skip">
+                               </div>
+                                <div class="form-group">
+                                      <label for="">@lang("site.manager_approval")</label>
+                                      <input type="radio"  checked name="skip_stage" class="form-control skip_stage" value="not_skip">
+                                </div>
+                            </div>
+                                     
+                             
+
+                            @endif
+                        @endif
+
+                            <textarea name="comment"  class="form-control mb-3"  id="modal-body" cols="30" rows="10" ></textarea>
 
                             <input type="hidden" name="approval_id" id="approval_id" value="{{$approveltimeline->id}}">
                             <button type="button" class="btn btn-outline-dark" data-dismiss="modal"> @lang('site.No') ,
