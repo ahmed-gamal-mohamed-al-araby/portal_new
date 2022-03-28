@@ -276,6 +276,7 @@ Route::group(
                         Route::resource('supplier', SupplierController::class)->except('destroy');
                         // excel
                         Route::post('supplier/importsupplier-delete', [SupplierController::class, 'importsupplier'])->name('importsupplier');
+                        Route::post('project/importproject-delete', [ProjectController::class, 'importproject'])->name('importproject');
                         // end excel
                     });
 

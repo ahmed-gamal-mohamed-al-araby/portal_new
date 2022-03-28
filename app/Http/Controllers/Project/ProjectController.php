@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Project;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Project\CreateProjectRequest;
 use App\Http\Requests\Project\UpdateProjectRequest;
+use App\Imports\ProjectImport;
 use App\Models\BusinessNature;
 use App\Models\Group;
 use App\Models\Item;
@@ -14,6 +15,7 @@ use App\Models\Sector;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProjectController extends Controller
 {
@@ -346,5 +348,17 @@ class ProjectController extends Controller
             'status' => $status,
             'sites' => $sites,
         ]);
+    }
+
+    public function importproject(Request $request)
+    {
+
+        if (!$request->file) {
+            return back()->with('error', 'Can not upload empty file.');
+
+        }
+        Excel::import(new ProjectImport,request()->file('file'));
+
+        return back()->with('success', 'Projects Imported Successfully.');
     }
 }
