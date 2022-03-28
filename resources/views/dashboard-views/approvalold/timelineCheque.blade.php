@@ -170,86 +170,6 @@ $name = 'name_' . $currentLanguage;
                                     </div>
                                 </div>
 
-                                @if ($sector)
-                                    {{-- Sector --}}
-                                    <div class="col-md-6">
-                                        <div class="input-group input-group-sm mb-2">
-                                            <div class="input-group-prepend">
-                                                <span style="width: 100px;" class="input-group-text"
-                                                    id="inputGroup-sizing-sm">@lang('site.Sector')</span>
-                                            </div>
-                                            <input class="form-control" readonly
-                                                value="{{ $sector['name_' . $currentLanguage] }}">
-                                            <input type="hidden" name="sector_id" value="">
-                                        </div>
-                                    </div>
-                                @endif
-                                @if ($department)
-                                    {{-- Department --}}
-                                    <div class="col-md-6">
-                                        <div class="input-group input-group-sm mb-2">
-                                            <div class="input-group-prepend">
-                                                <span style="width: 100px;" class="input-group-text"
-                                                    id="inputGroup-sizing-sm">@lang('site.Department')</span>
-                                            </div>
-                                            <input class="form-control" readonly
-                                                value="{{ $department['name_' . $currentLanguage] }}">
-                                            <input type="hidden" name="department_id" value="">
-                                        </div>
-                                    </div>
-                                @endif
-                                {{-- Request_number --}}
-                                @if ($PurchaseRequest)
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-sm mb-2">
-                                        <div class="input-group-prepend">
-                                            <span style="width: 100px;" class="input-group-text"
-                                                id="inputGroup-sizing-sm">@lang('site.request_number')</span>
-                                        </div>
-                                        <input class="form-control" readonly
-                                            value="{{ $PurchaseRequest->request_number }}">
-                                        <input type="hidden" name="department_id" value="">
-                                    </div>
-                                </div>
-                                @endif
-
-                                @if (!$department)
-                                    {{-- Project --}}
-                                    @if (isset($project['name_' . $currentLanguage]))
-                                        <div class="col-md-6">
-                                            <div class="input-group input-group-sm mb-2">
-                                                <div class="input-group-prepend">
-                                                    <span style="width: 100px;" class="input-group-text"
-                                                        id="inputGroup-sizing-sm">@lang('site.Project')</span>
-                                                </div>
-                                                <input class="form-control" readonly
-                                                    value="{{ $project['name_' . $currentLanguage] }}">
-                                                <input type="hidden" name="project_id" value="">
-                                            </div>
-                                        </div>
-                                    @endif
-
-                                    @if ($PurchaseRequest->site_id)
-
-                                        {{-- site --}}
-                                        <div class="col-md-6  site-section ">
-                                            <div class="input-group input-group-sm mb-2">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text"
-                                                        id="inputGroup-sizing-sm">@lang('site.Sites')</span>
-                                                </div>
-                                                <input type="text" class="form-control" readonly @foreach ($sites as $site) @if ($PurchaseRequest->site_id == $site->id) Value="{{ $site['name_' . $currentLanguage] }}" @endif  @endforeach >
-
-
-                                    @error('site_id')
-                                        <div class="text-danger">{{ $message }}
-                                        </div>
-                                    @enderror
-                            </div>
-                        </div>
-                        @endif
-
-                        @endif
 
 
                     </div>
@@ -260,7 +180,7 @@ $name = 'name_' . $currentLanguage;
                                 @lang("site.creator")
                             </h5>
 
-                            <h5>({{ $PurchaseRequest->requester['name_'.$currentLanguage] }})</h5>
+                            <h5>({{ $user['name_' . $currentLanguage] }})</h5>
 
                             <h5> @lang('site.approval_status_approved')
                                 <i class="fas fa-check text-success"></i>
@@ -269,12 +189,11 @@ $name = 'name_' . $currentLanguage;
                             </h5>
                         </div>
                         @foreach ($timelines as $timeline)
-                           @if (App\Models\User::where("name_en", $timeline->{'U_name_en'})->first()->sector->name_en != "Business Development")
-                           @if (App\Models\User::where("name_en", $timeline->{'U_name_en'})->first()->sector->name_en == "Purchasing" && App\Models\User::where("name_en", $timeline->{'U_name_en'})->first()->manager == null )
+                        @if (App\Models\User::where("name_en", $timeline->{'U_name_en'})->first()->sector->name_en != "Business Development")
+                        @if (App\Models\User::where("name_en", $timeline->{'U_name_en'})->first()->sector->name_en == "Purchasing" && App\Models\User::where("name_en", $timeline->{'U_name_en'})->first()->manager == null )
                                 @php
-                                    $idBusiness = App\Models\ApprovalTimeline::where( "table_name" ,"purchase_requests")->where("record_id",$PurchaseRequest->id)->where("business_action",2)->first();
+                                    $idBusiness = App\Models\ApprovalTimeline::where( "table_name" ,"cheque_requests")->where("record_id",$id)->where("business_action",2)->first();
                                 @endphp
-
                                 @if ($idBusiness)
                                         <div class="item d-flex">
 
@@ -313,59 +232,53 @@ $name = 'name_' . $currentLanguage;
                                            @endphp
 
                                        </div>
+
                                        @if ($approvalComment)
-                                           @if ( $approvalComment->comment || $approvalComment->comment_approve)
-                                             <h5 class="alert alert-warning"> {{ $approvalComment->comment}}  {{ $approvalComment->comment_approve}} </h5>
-                                           @endif
+                                            @if ( $approvalComment->comment || $approvalComment->comment_approve)
+
+                                                <h5 class="alert alert-warning">   {{ $approvalComment->comment}}  {{ $approvalComment->comment_approve}} </h5>
+                                       @endif
                                        @endif
                                @endif
                         @endif
-                           <div class="item d-flex">
+                            <div class="item d-flex">
 
-                            <h5>
-                                {{ $timeline->{'AS_' . $name} }}
-                            </h5>
+                                <h5>
+                                    {{ $timeline->{'AS_' . $name} }}
 
-                            <h5>
-                               @if ($timeline->action_id == null || $timeline->action_id == $timeline->user_id )
+
+                                </h5>
+
+                                <h5>@if ($timeline->action_id == null || $timeline->action_id == $timeline->user_id )
+
                                     ({{ $timeline->{'U_' . $name} }})
                                 @else
-                                    @lang("site.delegated")  :  {{App\Models\User::where("id",$timeline->action_id)->first()->name_ar}}
-                               @endif
-                            </h5>
+                                @lang("site.delegated")  :  {{App\Models\User::where("id",$timeline->action_id)->first()->name_ar}}
+                               @endif</h5>
 
-                            <h5>
-                                @if ($timeline->approval_status == 'P')
-                                    @lang('site.approval_status_pending')
-                                    <i class="fas fa-spinner fa-pulse text-warning"></i>
-                                @elseif($timeline->approval_status == 'A')@lang('site.approval_status_approved')
-                                    <i class="fas fa-check text-success"></i>
-                                @elseif($timeline->approval_status == 'RV')@lang('site.approval_status_reverted')
-                                    <i class="fas fa-undo-alt text-danger"></i>
-                                @elseif($timeline->approval_status == 'RJ')@lang('site.approval_status_rejected')
-                                    <i class="fas fa-times text-danger"></i>
-                                @endif
+                                <h5>
+                                    @if ($timeline->approval_status == 'P')
+                                        @lang('site.approval_status_pending')
+                                        <i class="fas fa-spinner fa-pulse text-warning"></i>
+                                    @elseif($timeline->approval_status == 'A')@lang('site.approval_status_approved')
+                                        <i class="fas fa-check text-success"></i>
+                                    @elseif($timeline->approval_status == 'RV')@lang('site.approval_status_reverted')
+                                        <i class="fas fa-undo-alt text-danger"></i>
+                                    @elseif($timeline->approval_status == 'RJ')@lang('site.approval_status_rejected')
+                                        <i class="fas fa-times text-danger"></i>
+                                    @endif
 
 
-                            </h5>
-                            <h5>{{ Carbon\Carbon::parse($timeline->updated_at)->translatedFormat('d F Y || g:i:s A') }}
-                            </h5>
+                                </h5>
+                                <h5>{{ Carbon\Carbon::parse($timeline->updated_at)->translatedFormat('d F Y || g:i:s A') }}
+                                </h5>
 
 
                             </div>
-
-
-                            @if ($timeline->comment )
-                            <h5 class="alert alert-warning">{{ $timeline->comment }} </h5>
-
+                            @if ($timeline->comment)
+                            <h5 class="alert alert-warning">{{ $timeline->comment }}</h5>
                         @endif
-                        @if ($timeline->comment_approve)
-                        <h5 class="alert alert-success">{{ $timeline->comment_approve }} </h5>
-
-                        @endif
-                        @endif
-
-
+                            @endif
                         @endforeach
 
                     </main>
@@ -382,5 +295,5 @@ $name = 'name_' . $currentLanguage;
 
 {{-- Custom scripts --}}
 @section('scripts')
-    <script></script>
+
 @endsection
