@@ -159,7 +159,6 @@ $currentLanguage = app()->getLocale();
                                             <select name="site_id" class="custom-select" id="site" required
                                                 @if (!$userData['project']) {{ 'disabled' }} @endif>
                                                 @if ($userData['project'])
-
                                                     @foreach ($userData['project']['sites'] as $site)
                                                         <option value="{{ $site->id }}" data-toggle="tooltip"
                                                             data-placement="top" title="Group" @if (old('site_id') == $site->id) {{ 'selected' }} @endif>

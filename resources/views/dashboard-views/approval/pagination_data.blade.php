@@ -26,7 +26,10 @@ $currentIndex=1;
             <th>@lang('site.expected_duration')</th>
             <th>@lang('site.order_status')</th>
             @endif
+<<<<<<< HEAD
             <th>@lang('site.purchase_type')</th>
+=======
+>>>>>>> cb9cdefd54a3c88fa7e69886c7477d57c41fb29b
 
             <th> @lang('site.actions')</th>
         </tr>

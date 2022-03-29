@@ -43,18 +43,17 @@ $currentLanguage = app()->getLocale();
                 <div class="col-12">
                     <div class="row mb-3">
                         <div class="col-12 d-flex justify-content-between">
-                           
+
 
                             <a href="{{ route('purchase-request.create') }}" class="btn btn-success header-btn ">@lang('site.Add')
                                 @lang('site.purchase_request')</a>
-                         
 
-                            
+
+
                             <a href="{{ route('purchase_request.trash') }}"
                                 class="btn btn-warning header-btn ">@lang('site.Trashed_purchase_requests')
                                 <span class="main-span"><span>
                             </a>
-                           
                         </div>
                     </div>
 

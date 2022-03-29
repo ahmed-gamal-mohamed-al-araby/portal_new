@@ -7,7 +7,6 @@ $x=1;
 
 <table id="example" class="display">
 
-
     <thead>
         <tr>
             <th> @lang('site.table_name')</th>
@@ -19,14 +18,6 @@ $x=1;
             <th> @lang('site.actions')</th>
         </tr>
     </thead>
-
-
-
-
-
-
-
-
 
     {{-- Table body --}}
     <tbody>
