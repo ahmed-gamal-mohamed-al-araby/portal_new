@@ -322,6 +322,7 @@ $name = 'name_' . $currentLanguage;
                         $approveltimeline = App\Models\ApprovalTimeline::where("record_id",$purchaseOrder->id)->where("approval_status","P")->first();
                     @endphp
                         {{-- Confirm modal --}}
+                        @if ($value == 0)
     <div class="modal fade text-center" id="confirm_modal{{ $approveltimeline->id}}" tabindex="-1" role="dialog"
             aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -389,7 +390,7 @@ $name = 'name_' . $currentLanguage;
                 </div>
             </div>
         </div>
-                    @if ($value == 0)
+
                     <form action="{{ route('approve.order.items') }}" method="POST">
                         @csrf
                         <button type="submit" class="btn btn-success float-right">
@@ -678,37 +679,43 @@ $name = 'name_' . $currentLanguage;
                                 </p>
                                 </div>
                                     @foreach ($timelines as $timeline)
+                                    @php
+                                        $approvelStepID  = App\Models\approvalCycleApprovalStep::find($timeline->approval_cycle_approval_step_id)->approval_step_id;
+                                        $managerProject  = App\Models\approvalStep::find($approvelStepID)->code;
+                                    @endphp
                                     @if (App\Models\User::where("name_en", $timeline->{'U_name_en'})->first()->sector->name_en != "Business Development")
-                                        <div class="col">
-                                            <p style=" margin-bottom:0; font-size:13px">
-                                                {{ $timeline->{'AS_' . $name} }}
-                                            </p>
-                                            <p style="font-size:10px; margin-bottom:0"> @if ($timeline->action_id == null || $timeline->action_id == $timeline->user_id )
+                                        @if ($managerProject != "PRO_M")
+                                            <div class="col">
+                                                <p style=" margin-bottom:0; font-size:13px">
+                                                    {{ $timeline->{'AS_' . $name} }}
+                                                </p>
+                                                <p style="font-size:10px; margin-bottom:0"> @if ($timeline->action_id == null || $timeline->action_id == $timeline->user_id )
 
-                                                ({{ $timeline->{'U_' . $name} }})
-                                            @else
-                                            @lang("site.delegated")  : ( {{App\Models\User::where("id",$timeline->action_id)->first()->name_ar}})
-                                           @endif </p>
-                                            <h6 class="text-success " style="margin-bottom:2px;font-size:9px;">
-                                                @if ($timeline->approval_status == 'P')
-                                                    @lang('site.approval_status_pending')
-                                                    <i class="fas fa-spinner fa-pulse text-warning"></i>
-                                                @elseif($timeline->approval_status == 'A')@lang('site.approval_status_approved')
-                                                    <i class="fas fa-check text-success"></i>
-                                                @elseif($timeline->approval_status == 'RV')@lang('site.approval_status_reverted')
-                                                    <i class="fas fa-undo-alt text-danger"></i>
-                                                @elseif($timeline->approval_status == 'RJ')@lang('site.approval_status_rejected')
-                                                    <i class="fas fa-times text-danger"></i>
+                                                    ({{ $timeline->{'U_' . $name} }})
+                                                @else
+                                                @lang("site.delegated")  : ( {{App\Models\User::where("id",$timeline->action_id)->first()->name_ar}})
+                                               @endif </p>
+                                                <h6 class="text-success " style="margin-bottom:2px;font-size:9px;">
+                                                    @if ($timeline->approval_status == 'P')
+                                                        @lang('site.approval_status_pending')
+                                                        <i class="fas fa-spinner fa-pulse text-warning"></i>
+                                                    @elseif($timeline->approval_status == 'A')@lang('site.approval_status_approved')
+                                                        <i class="fas fa-check text-success"></i>
+                                                    @elseif($timeline->approval_status == 'RV')@lang('site.approval_status_reverted')
+                                                        <i class="fas fa-undo-alt text-danger"></i>
+                                                    @elseif($timeline->approval_status == 'RJ')@lang('site.approval_status_rejected')
+                                                        <i class="fas fa-times text-danger"></i>
+                                                    @endif
+                                                </h6>
+                                                <p style="font-size:5px;margin-bottom:5px;">
+                                                    {{ Carbon\Carbon::parse($timeline->created_at)->translatedFormat('d F Y || g:i:s A') }}
+                                                </p>
+                                                @if ($timeline->comment)
+                                                    <p style="margin-top:0;font-size:13px;">{{ $timeline->comment }}</p>
                                                 @endif
-                                            </h6>
-                                            <p style="font-size:5px;margin-bottom:5px;">
-                                                {{ Carbon\Carbon::parse($timeline->created_at)->translatedFormat('d F Y || g:i:s A') }}
-                                            </p>
-                                            @if ($timeline->comment)
-                                                <p style="margin-top:0;font-size:13px;">{{ $timeline->comment }}</p>
-                                            @endif
-                                        </div>
+                                            </div>
                                         @endif
+                                    @endif
                                     @endforeach
                                     {{-- <div class="col">
                                         ahmed gamal

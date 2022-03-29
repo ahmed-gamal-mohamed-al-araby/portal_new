@@ -320,7 +320,12 @@ $name = 'name_' . $currentLanguage;
                                        @endif
                                @endif
                         @endif
-                           <div class="item d-flex">
+                        @php
+                            $approvelStepID  = App\Models\approvalCycleApprovalStep::find($timeline->approval_cycle_approval_step_id)->approval_step_id;
+                            $managerProject  = App\Models\approvalStep::find($approvelStepID)->code;
+                        @endphp
+                        @if ($managerProject != "PRO_M")
+                        <div class="item d-flex">
 
                             <h5>
                                 {{ $timeline->{'AS_' . $name} }}
@@ -363,6 +368,8 @@ $name = 'name_' . $currentLanguage;
                         <h5 class="alert alert-success">{{ $timeline->comment_approve }} </h5>
 
                         @endif
+                        @endif
+
                         @endif
 
 

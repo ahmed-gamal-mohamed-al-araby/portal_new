@@ -14,7 +14,7 @@ $currentIndex=1;
             <th> @lang('site.request_number')</th>
             <th> @lang('site.department')</th>
             <th>@lang('site.project')</th>
-            <th>@lang('site.site')</th>
+            {{-- <th>@lang('site.site')</th> --}}
             @if ($accept==0)
             <th>@lang("site.stepName")</th>
             <th> @lang('site.status')</th>
@@ -26,10 +26,7 @@ $currentIndex=1;
             <th>@lang('site.expected_duration')</th>
             <th>@lang('site.order_status')</th>
             @endif
-<<<<<<< HEAD
             <th>@lang('site.purchase_type')</th>
-=======
->>>>>>> cb9cdefd54a3c88fa7e69886c7477d57c41fb29b
 
             <th> @lang('site.actions')</th>
         </tr>
@@ -37,6 +34,7 @@ $currentIndex=1;
 
     {{-- Table body --}}
     <tbody>
+
         @foreach ($approvalTimelines as $index => $approvalTimeline)
             {{-- @if (auth()->user()->sector->id == $approvalTimeline->purchaseRequest->sector_id) --}}
                 @if ($approvalTimeline->approvalCycleApprovalStep !== null)
@@ -63,7 +61,7 @@ $currentIndex=1;
                             @endif
 
                         </td>
-                        <td>
+                        {{-- <td>
                             @if (isset($sites[$index]))
                             @if (count($sites[$index]))
                             {{ $sites[$index][0]['name_' . $currentLanguage] }}
@@ -72,7 +70,7 @@ $currentIndex=1;
                             @endif
                             @endif
 
-                        </td>
+                        </td> --}}
 
                         @if ($accept == 0)
                                 @php

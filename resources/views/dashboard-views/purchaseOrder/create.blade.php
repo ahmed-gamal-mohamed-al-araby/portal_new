@@ -116,7 +116,6 @@ $currentLanguage = app()->getLocale();
                                                     <label for="">
                                                         @lang("site.request_number")
                                                     </label>
-<<<<<<< HEAD
 
                                                     <select name="purchase_request_id[]" multiple class="custom-select purchase_request_number" id="">
                                                         <option></option>
@@ -138,14 +137,6 @@ $currentLanguage = app()->getLocale();
                                                         @endif
 
 
-=======
-                                                    <select name="purchase_request_id[]" multiple class="custom-select purchase_request_number" id="">
-                                                        <option></option>
-                                                        @foreach ($purchaseRequest as $purchaseReq)
-                                                        <option value="{{ $purchaseReq->id }}" data-toggle="tooltip" data-placement="top" title="Supplier Name" @if (old('supplier_id')==$supplier->id) {{ 'selected' }} @endif>
-                                                            {{ $purchaseReq->request_number }}
-                                                        </option>
->>>>>>> cb9cdefd54a3c88fa7e69886c7477d57c41fb29b
                                                         @endforeach
                                                     </select>
 

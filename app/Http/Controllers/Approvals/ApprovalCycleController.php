@@ -496,7 +496,7 @@ class ApprovalCycleController extends Controller
             ->join('approval_cycle_approval_steps', 'approval_cycle_approval_steps.id', '=', 'approval_timelines.approval_cycle_approval_step_id')
             ->join('approval_steps', 'approval_steps.id', '=', 'approval_cycle_approval_steps.approval_step_id')
             ->leftJoin('approval_timeline_comments', 'approval_timeline_comments.approval_timeline_id', '=', 'approval_timelines.id')
-            ->select('approval_steps.name_ar as AS_name_ar',  "approval_timelines.action_id" ,"approval_timelines.user_id" ,'approval_steps.name_en  as AS_name_en',  'users.name_ar as U_name_ar', 'users.name_en as U_name_en', 'approval_timelines.approval_status',
+            ->select('approval_steps.name_ar as AS_name_ar',  "approval_timelines.action_id" ,  "approval_timelines.approval_cycle_approval_step_id" , "approval_timelines.user_id" ,'approval_steps.name_en  as AS_name_en',  'users.name_ar as U_name_ar', 'users.name_en as U_name_en', 'approval_timelines.approval_status',
             'approval_timeline_comments.comment as comment','approval_timelines.created_at')
             ->selectRaw("MAX(approval_timelines.created_at) AS created_at")
             ->groupBy("approval_timelines.user_id")

@@ -665,6 +665,7 @@ $name = 'name_' . $currentLanguage;
             <p style="font-size:7px;margin-bottom:5px;">{{ Carbon\Carbon::parse($order->created_at)->translatedFormat('d F Y || g:i:s A') }}
             </p>
             </div>
+
                                     @foreach ($timelines as $timeline)
                                     @if (App\Models\User::where("name_en", $timeline->{'U_name_en'})->first()->sector->name_en != "Business Development")
 
