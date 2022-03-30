@@ -175,7 +175,7 @@ $x=1;
                                     <a href="{{ route('approvals.action.approve.business', $ApprovalTimeline->id) }}" class="btn btn-success" tooltip="@lang('site.send_business')"><i class="fas fa-paper-plane"></i></a>
                                 @endif
 
-                                <a data-approval_time="{{ $ApprovalTimeline->id }}" data-type='approval' data-toggle="modal" data-target="#confirm_modal" class="btn btn-success" data-pur="{{ $ApprovalTimeline->table_name }}" data-toggle="modal" tooltip="@lang('site.approve_comment')"><i class="fas fa-comment-dots"></i></a>
+                                <a data-approval_time="{{ $ApprovalTimeline->id }}" data-user = "{{$ApprovalTimeline->username }}"  data-type='approval' data-toggle="modal" data-target="#confirm_modal" class="btn btn-success" data-pur="{{ $ApprovalTimeline->table_name }}" data-toggle="modal" tooltip="@lang('site.approve_comment')"><i class="fas fa-comment-dots"></i></a>
                                     @if ($ApprovalTimeline->username == "michel.gerges" && auth()->user()->hasRole('super_admin'))
                                     @else
                                     <a href="{{ route('approvals.action.approve', $ApprovalTimeline->id) }}" class="btn btn-success" tooltip="@lang('site.Approve')"><i class="fas fa-check"></i></a>
