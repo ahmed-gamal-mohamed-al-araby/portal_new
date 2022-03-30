@@ -36,11 +36,10 @@ $x=1;
     //}
     ?>
 
-
       {{-- $idBusiness->approval_status != "P" ||  --}}
-     {{-- @if (auth()->user()->name_en == "Michel Gerges Michael Tadros")
+     {{-- @if (auth()->user()->sector->name_en == "Purchasing")
      @if ($idBusiness) --}}
-            @if(auth()->user()->name_en == "Michel Gerges Michael Tadros")
+            @if(auth()->user()->sector->name_en == "Purchasing")
                 @if($ApprovalTimeline->approval_status == 'P' && $ApprovalTimeline->business_action == 0 )
                 @if ($ApprovalTimeline->table_name == "purchase_orders" || $ApprovalTimeline->table_name == "purchase_requests")
                 <tr>
@@ -90,7 +89,7 @@ $x=1;
                             <a href="{{ route('approvals.action.showChequeRequest',[ $ApprovalTimeline->id,0,0]) }}" class="btn btn-success" tooltip="@lang('site.Show')"><i class="fas fa-eye"></i></a>
                             @endif
                             @if (auth()->user()->sector)
-                            @if (auth()->user()->name_en == "Michel Gerges Michael Tadros")
+                            @if (auth()->user()->sector->name_en == "Purchasing")
                             @php
                                     $idBusiness = App\Models\ApprovalTimeline::where( "table_name" ,"purchase_requests")->where("record_id",$ApprovalTimeline->record_id)->where("business_action",2)->first();
                             @endphp
@@ -161,7 +160,7 @@ $x=1;
                                 <a href="{{ route('approvals.action.showChequeRequest',[ $ApprovalTimeline->id,0,0]) }}" class="btn btn-success" tooltip="@lang('site.Show')"><i class="fas fa-eye"></i></a>
                                 @endif
                                 @if (auth()->user()->sector)
-                                @if (auth()->user()->name_en == "Michel Gerges Michael Tadros")
+                                @if (auth()->user()->sector->name_en == "Purchasing")
                                     <a href="{{ route('approvals.action.approve.business', $ApprovalTimeline->id) }}" class="btn btn-success" tooltip="@lang('site.send_business')"><i class="fas fa-paper-plane"></i></a>
                                 @endif
                                 @endif
@@ -229,7 +228,7 @@ $x=1;
                         <a href="{{ route('approvals.action.showChequeRequest',[ $ApprovalTimeline->id,0,0]) }}" class="btn btn-success" tooltip="@lang('site.Show')"><i class="fas fa-eye"></i></a>
                         @endif
                         @if (auth()->user()->sector)
-                        @if (auth()->user()->name_en == "Michel Gerges Michael Tadros")
+                        @if (auth()->user()->sector->name_en == "Purchasing")
                             <a href="{{ route('approvals.action.approve.business', $ApprovalTimeline->id) }}" class="btn btn-success" tooltip="@lang('site.send_business')"><i class="fas fa-paper-plane"></i></a>
                         @endif
                         @endif
@@ -313,7 +312,7 @@ $x=1;
                     <a href="{{ route('approvals.action.showChequeRequest',[ $ApprovalTimeline->id,0,0]) }}" class="btn btn-success" tooltip="@lang('site.Show')"><i class="fas fa-eye"></i></a>
                     @endif
                     @if (auth()->user()->sector)
-                    @if (auth()->user()->name_en == "Michel Gerges Michael Tadros")
+                    @if (auth()->user()->sector->name_en == "Purchasing")
                         <a href="{{ route('approvals.action.approve.business', $ApprovalTimeline->id) }}" class="btn btn-success" tooltip="@lang('site.send_business')"><i class="fas fa-paper-plane"></i></a>
                     @endif
                     @endif
