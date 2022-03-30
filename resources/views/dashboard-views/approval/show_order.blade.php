@@ -393,12 +393,14 @@ $name = 'name_' . $currentLanguage;
 
                     <form action="{{ route('approve.order.items') }}" method="POST">
                         @csrf
-                        <button type="submit" class="btn btn-success float-right">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
+                        <div class="float-right">
+                            <button type="submit" class="btn btn-success d-inline-block">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
 
-                        <a data-approval_time="{{ $approveltimeline->id }}" data-type='approval' data-toggle="modal" data-target="#confirm_modal{{ $approveltimeline->id}}" class="btn btn-success" data-pur="purchase_requests" data-toggle="modal" tooltip="@lang('site.approve_comment')"><i class="fas fa-comment-dots"></i></a>
+                            <a data-approval_time="{{ $approveltimeline->id }}" data-type='approval' data-toggle="modal" data-target="#confirm_modal{{ $approveltimeline->id}}" class="btn btn-success d-inline-block" data-pur="purchase_requests" data-toggle="modal" tooltip="@lang('site.approve_comment')"><i class="fas fa-comment-dots"></i></a>
 
+                        </div>
                         @elseif ($message == 3)
                         <form action="{{ route('approve.order.items.message') }}" method="POST">
                             @csrf
