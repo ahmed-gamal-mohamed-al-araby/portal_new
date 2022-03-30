@@ -486,6 +486,7 @@ class ApprovalCycleController extends Controller
     public function showOrder($id, $value , $message)
 
     {
+
         $factory = 0;
         $approvalTimeline = ApprovalTimeline::find($id);
 
@@ -1144,18 +1145,16 @@ class ApprovalCycleController extends Controller
     public function showAllApprovalOrdersTimeline()
     {
         $authSectorId = auth()->user()->sector->id;
-
-        // if (Auth::user()->can('timeline-purchase-order-super')) {
-        //     $purchaseRequestId = PurchaseRequest::pluck("id");
-        // }
-        // else {
-        //     $purchaseRequestId = PurchaseRequest::where("sector_id" , auth()->user()->sector->id)->pluck("id");
-        // }
         $purchaseRequestId = PurchaseRequest::pluck("id");
         $itemRequests = ItemRequest::whereIn("purchase_request_id",$purchaseRequestId)->pluck("id");
-        $purchaseOrdersId = ItemOrder::whereIn("item_request_id",$itemRequests)->pluck("purchase_order_id");
-        $userSector = User::where("sector_id",$authSectorId)->pluck("id");
-        $purchseOrderId = PurchaseOrder::whereIn("requester_id",$userSector)->pluck("id");
+        if (Auth::user()->can('timeline-purchase-order-super') || auth()->user()->hasRole("super_admin")) {
+            $purchseOrderId = ItemOrder::whereIn("item_request_id",$itemRequests)->pluck("purchase_order_id");
+        }
+        else {
+            $purchaseOrdersId = ItemOrder::whereIn("item_request_id",$itemRequests)->pluck("purchase_order_id");
+            $userSector = User::where("sector_id",$authSectorId)->pluck("id");
+            $purchseOrderId = PurchaseOrder::whereIn("requester_id",$userSector)->pluck("id");
+        }
 
         $approvalTimelines = ApprovalTimeline::whereIn("record_id", $purchseOrderId)->with("itemOrders", "purchaseOrder")->where("table_name", "purchase_orders")->groupby("record_id")->distinct()->get();
         $data = [];

@@ -112,7 +112,7 @@ $currentLanguage = app()->getLocale();
     <script>
         /*  define select2  */
         $('#user').select2({
-            placeholder: "@lang('site.Choose') @lang('site.sector')",
+            placeholder: "@lang('site.Choose') @lang('site.user')",
             allowClear: true,
         });
         $('#role').select2({
