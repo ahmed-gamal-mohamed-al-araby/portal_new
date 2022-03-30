@@ -18,6 +18,11 @@ $name = 'name_' . $currentLanguage;
 @section('styles')
 <link rel="stylesheet" href="{{ asset('plugins/tablesorter/css/theme.materialize.min.css') }}">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+<style>
+    .direct {
+        display: flex;
+    }
+</style>
 @endsection
 
 {{-- Page content --}}
@@ -81,8 +86,8 @@ $name = 'name_' . $currentLanguage;
                     <form action="" method="POST" id="confirm_form" enctype="multipart/form-data">
                         @csrf
 
-                        @if (auth()->user()->sector)
-                            @if (auth()->user()->sector->name_en == "Purchasing")
+
+                        @if (auth()->user()->name_en == "Michel Gerges Michael Tadros")
 
                             <div class="row purchase_type_top approve_only">
                                    <div class="col">
@@ -100,7 +105,7 @@ $name = 'name_' . $currentLanguage;
                                 </div>
 
 
-                            <div class="d-flex approve_only">
+                            <div class=" direct approve_only">
                                <div class="form-group">
                                     <label for="">@lang("site.direct_consent")</label>
                                     <input type="radio" name="skip_stage"   class="form-control skip_stage"  value="skip">
@@ -111,10 +116,8 @@ $name = 'name_' . $currentLanguage;
                                 </div>
                             </div>
                                      
-                             
 
                             @endif
-                        @endif
 
                         <textarea name="comment"  class="form-control mb-3"  id="modal-body" cols="30" rows="10" ></textarea>
                         @if (auth()->user()->department)
@@ -219,6 +222,7 @@ $name = 'name_' . $currentLanguage;
                 const button = $(event.relatedTarget);
                 const approvalId = button.data('approval_time');
                 const confirmModalType = button.data('type');
+                const user = button.data('user');
                 const pur = button.data('pur');
                 // Change form action attribute
                 if(pur == "purchase_orders") {
@@ -226,10 +230,17 @@ $name = 'name_' . $currentLanguage;
                     $(".purchase_type_top").hide();
                 }
 
+                if(user == "michel.gerges") {
+                    $(".approve_only").css("display",'flex');
+                }
+
                 if(confirmModalType != "approval") {
                     $('.purchase_type').val("");
                     $('.skip_stage').val("");
-                    $(".approvalId").hide();
+                    // $(".approvalId").hide();
+                    $(".approve_only").css("display",'none');
+                } else {
+                    $(".approve_only").css("display",'flex');
                 }
 
                 if(confirmModalType == "revert") {
