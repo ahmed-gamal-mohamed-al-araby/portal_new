@@ -30,7 +30,9 @@ $currentLanguage = app()->getLocale();
         /* .aqrtp,.qos,.qrtp {
             font-size: 7px !important;
         } */
-
+        .qtyAll::placeholder {
+            font-size: 55% !important;
+        }
 
     </style>
 @endsection
@@ -296,7 +298,7 @@ $currentLanguage = app()->getLocale();
                                                                     <div class="col-md-3 mb-1 pl-md-0 pl-lg-1">
                                                                         <input type="number" name="quantities[]"
                                                                             placeholder="@lang('site.quantity_required')"
-                                                                            class="form-control qrtp" min=1
+                                                                            class="form-control qtyAll qrtp" min=1
                                                                             value="{{ old('quantities')[$key] }}" />
                                                                         {{-- Validation --}}
                                                                         <div
@@ -313,7 +315,7 @@ $currentLanguage = app()->getLocale();
                                                                     <div class="col-md-3 mb-1 pl-md-0 pl-lg-1">
                                                                         <input type="number" name="reserved_quantity[]"
                                                                             placeholder="@lang('site.reserved_quantity')"
-                                                                            class="form-control qrtp" min=1
+                                                                            class="form-control qtyAll qrtp" min=1
                                                                             value="{{ old('reserved_quantity')[$key] }}" />
                                                                         {{-- Validation --}}
                                                                         <div
@@ -331,7 +333,7 @@ $currentLanguage = app()->getLocale();
                                                                     <div class="col-md-3 mb-1 no-gutters">
                                                                         <input type="number" name="stock_quantities[]" min=0
                                                                             placeholder="@lang('site.quantity_in_store')"
-                                                                            class="form-control qos"
+                                                                            class="form-control qtyAll qos"
                                                                             value="{{ old('stock_quantities')[$key] }}" />
                                                                         {{-- Validation --}}
                                                                         <div
@@ -576,7 +578,7 @@ $currentLanguage = app()->getLocale();
                                                         <div class="col-md-3 mb-1 pl-md-0 pl-lg-1">
                                                             <input type="number" name="quantities[]"
                                                                 placeholder="@lang('site.quantity_required')"
-                                                                class="form-control qrtp" min=1 data-toggle="tooltip"
+                                                                class="form-control  qtyAll qrtp" min=1 data-toggle="tooltip"
                                                                 data-placement="top" title=" @lang('site.quantity_required')" />
                                                             {{-- Validation --}}
                                                             <div class="text-danger d-none required-validate-error mb-3">
@@ -589,7 +591,7 @@ $currentLanguage = app()->getLocale();
                                                         <div class="col-md-3 mb-1 no-gutters">
                                                             <input type="number" name="stock_quantities[]" min=0
                                                                 placeholder="@lang('site.quantity_in_store')"
-                                                                class="form-control qos" data-toggle="tooltip"
+                                                                class="form-control qtyAll qos" data-toggle="tooltip"
                                                                 data-placement="top" title="@lang('site.quantity_in_store') " />
                                                             {{-- Validation --}}
                                                             <div class="text-danger d-none required-validate-error mb-3">
@@ -601,7 +603,7 @@ $currentLanguage = app()->getLocale();
                                                         <div class="col-md-3 mb-1 no-gutters">
                                                             <input type="number" name="actual_quantities[]" min=0
                                                                 placeholder="@lang('site.actual_quantity')" title="@lang('site.actual_quantity')"
-                                                                class="form-control aqrtp" />
+                                                                class="form-control qtyAll aqrtp" />
                                                             {{-- Validation --}}
                                                             <div class="text-danger d-none required-validate-error mb-3">
                                                                 @lang('site.data-required')

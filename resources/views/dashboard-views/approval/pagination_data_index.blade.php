@@ -89,18 +89,24 @@ $x=1;
                             @elseif($ApprovalTimeline->table_name == "cheque_requests")
                             <a href="{{ route('approvals.action.showChequeRequest',[ $ApprovalTimeline->id,0,0]) }}" class="btn btn-success" tooltip="@lang('site.Show')"><i class="fas fa-eye"></i></a>
                             @endif
-                            @if (auth()->user()->sector)
-                            @if (auth()->user()->name_en == "Michel Gerges Michael Tadros")
-                            @php
-                                    $idBusiness = App\Models\ApprovalTimeline::where( "table_name" ,"purchase_requests")->where("record_id",$ApprovalTimeline->record_id)->where("business_action",2)->first();
-                            @endphp
-                            @if (!$idBusiness)
-                                <a href="{{ route('approvals.action.approve.business', $ApprovalTimeline->id) }}" class="btn btn-success" tooltip="@lang('site.send_business')"><i class="fas fa-paper-plane"></i></a>
+
+                            @if (auth()->user()->name_en == "Michel Gerges Michael Tadros" )
+                                @php
+                                        $idBusiness = App\Models\ApprovalTimeline::where( "table_name" ,"purchase_requests")->where("record_id",$ApprovalTimeline->record_id)->where("business_action",2)->first();
+                                @endphp
+                                @if (!$idBusiness)
+                                    <a href="{{ route('approvals.action.approve.business', $ApprovalTimeline->id) }}" class="btn btn-success" tooltip="@lang('site.send_business')"><i class="fas fa-paper-plane"></i></a>
+                                @endif
                             @endif
-                            @endif
-                            @endif
+
+
+
                             <a data-approval_time="{{ $ApprovalTimeline->id }}" data-type='approval' data-toggle="modal" data-target="#confirm_modal" class="btn btn-success" data-pur="{{ $ApprovalTimeline->table_name }}" data-toggle="modal" tooltip="@lang('site.approve_comment')"><i class="fas fa-comment-dots"></i></a>
-                            <a href="{{ route('approvals.action.approve', $ApprovalTimeline->id) }}" class="btn btn-success" tooltip="@lang('site.Approve')"><i class="fas fa-check"></i></a>
+                            @if (auth()->user()->sector)
+                            @if (auth()->user()->name_en != "Michel Gerges Michael Tadros")
+                                <a href="{{ route('approvals.action.approve', $ApprovalTimeline->id) }}" class="btn btn-success" tooltip="@lang('site.Approve')"><i class="fas fa-check"></i></a>
+                            @endif
+                            @endif
                             <a data-approval_time="{{ $ApprovalTimeline->id }}" data-type='revert' data-toggle="modal" data-target="#confirm_modal" class="btn btn-warning" data-toggle="modal" tooltip="@lang('site.Revert')"><i class="fas fa-undo-alt"></i></a>
                             <a data-approval_time="{{ $ApprovalTimeline->id }}" data-type='reject' data-toggle="modal" data-target="#confirm_modal" class="btn btn-danger" data-toggle="modal" tooltip="@lang('site.Reject')"><i class="fa fa-times"></i></a>
                         </div>
@@ -160,13 +166,20 @@ $x=1;
                                 @elseif($ApprovalTimeline->table_name == "cheque_requests")
                                 <a href="{{ route('approvals.action.showChequeRequest',[ $ApprovalTimeline->id,0,0]) }}" class="btn btn-success" tooltip="@lang('site.Show')"><i class="fas fa-eye"></i></a>
                                 @endif
-                                @if (auth()->user()->sector)
+
                                 @if (auth()->user()->name_en == "Michel Gerges Michael Tadros")
                                     <a href="{{ route('approvals.action.approve.business', $ApprovalTimeline->id) }}" class="btn btn-success" tooltip="@lang('site.send_business')"><i class="fas fa-paper-plane"></i></a>
                                 @endif
+
+                                @if ($ApprovalTimeline->username == "michel.gerges" && auth()->user()->hasRole('super_admin'))
+                                    <a href="{{ route('approvals.action.approve.business', $ApprovalTimeline->id) }}" class="btn btn-success" tooltip="@lang('site.send_business')"><i class="fas fa-paper-plane"></i></a>
                                 @endif
+
                                 <a data-approval_time="{{ $ApprovalTimeline->id }}" data-type='approval' data-toggle="modal" data-target="#confirm_modal" class="btn btn-success" data-pur="{{ $ApprovalTimeline->table_name }}" data-toggle="modal" tooltip="@lang('site.approve_comment')"><i class="fas fa-comment-dots"></i></a>
-                                <a href="{{ route('approvals.action.approve', $ApprovalTimeline->id) }}" class="btn btn-success" tooltip="@lang('site.Approve')"><i class="fas fa-check"></i></a>
+                                    @if ($ApprovalTimeline->username == "michel.gerges" && auth()->user()->hasRole('super_admin'))
+                                    @else
+                                    <a href="{{ route('approvals.action.approve', $ApprovalTimeline->id) }}" class="btn btn-success" tooltip="@lang('site.Approve')"><i class="fas fa-check"></i></a>
+                                    @endif
                                 <a data-approval_time="{{ $ApprovalTimeline->id }}" data-type='revert' data-toggle="modal" data-target="#confirm_modal" class="btn btn-warning" data-toggle="modal" tooltip="@lang('site.Revert')"><i class="fas fa-undo-alt"></i></a>
                                 <a data-approval_time="{{ $ApprovalTimeline->id }}" data-type='reject' data-toggle="modal" data-target="#confirm_modal" class="btn btn-danger" data-toggle="modal" tooltip="@lang('site.Reject')"><i class="fa fa-times"></i></a>
                             </div>
