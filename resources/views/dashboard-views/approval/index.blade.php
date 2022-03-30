@@ -21,6 +21,8 @@ $name = 'name_' . $currentLanguage;
 <style>
     .direct {
         display: flex;
+    }.test {
+        display: none;
     }
 </style>
 @endsection
@@ -118,6 +120,37 @@ $name = 'name_' . $currentLanguage;
                                      
 
                             @endif
+                        @if (auth()->user()->hasRole("super_admin"))
+                        <div class="test">
+                            <div class="row purchase_type_top approve_only">
+                                           <div class="col">
+                                                <label for="">@lang("site.purchase_out")</label>
+                                                <input type="radio" name="purchase_type" class="form-control purchase_type"  value="purchase_out">
+                                           </div>
+                                            <div class="col">
+                                                  <label for="">@lang("site.purchase_in")</label>
+                                                  <input type="radio"  checked name="purchase_type" class="form-control purchase_type" value="purchase_in">
+                                            </div>
+                                            <div class="col">
+                                                  <label for="">@lang("site.both")</label>
+                                                  <input type="radio"  name="purchase_type" class="form-control purchase_type" value="both">
+                                            </div>
+                                        </div>
+
+
+                                    <div class=" direct approve_only">
+                                       <div class="form-group">
+                                            <label for="">@lang("site.direct_consent")</label>
+                                            <input type="radio" name="skip_stage"   class="form-control skip_stage"  value="skip">
+                                       </div>
+                                        <div class="form-group">
+                                              <label for="">@lang("site.manager_approval")</label>
+                                              <input type="radio"  checked name="skip_stage" class="form-control skip_stage" value="not_skip">
+                                        </div>
+                                    </div>
+                        </div>
+                        @endif
+
 
                         <textarea name="comment"  class="form-control mb-3"  id="modal-body" cols="30" rows="10" ></textarea>
                         @if (auth()->user()->department)
@@ -231,7 +264,10 @@ $name = 'name_' . $currentLanguage;
                 }
 
                 if(user == "michel.gerges") {
-                    $(".approve_only").css("display",'flex');
+                    $(".test").show();
+                } else {
+                    $(".test").hide();
+
                 }
 
                 if(confirmModalType != "approval") {
