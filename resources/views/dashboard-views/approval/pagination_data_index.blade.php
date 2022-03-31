@@ -90,9 +90,16 @@ $x=1;
                             <a href="{{ route('approvals.action.showChequeRequest',[ $ApprovalTimeline->id,0,0]) }}" class="btn btn-success" tooltip="@lang('site.Show')"><i class="fas fa-eye"></i></a>
                             @endif
 
+                            {{-- @if (auth()->user()->hasRole("super_admin")) --}}
+                                    {{-- ahmed gamal --}}
+                            {{-- @endif --}}
+
+
+
                             @if (auth()->user()->name_en == "Michel Gerges Michael Tadros" )
+
                                 @php
-                                        $idBusiness = App\Models\ApprovalTimeline::where( "table_name" ,"purchase_requests")->where("record_id",$ApprovalTimeline->record_id)->where("business_action",2)->first();
+                                        $idBusiness = App\Models\ApprovalTimeline::where("record_id",$ApprovalTimeline->record_id)->where("business_action",2)->first();
                                 @endphp
                                 @if (!$idBusiness)
                                     <a href="{{ route('approvals.action.approve.business', $ApprovalTimeline->id) }}" class="btn btn-success" tooltip="@lang('site.send_business')"><i class="fas fa-paper-plane"></i></a>
@@ -167,12 +174,17 @@ $x=1;
                                 <a href="{{ route('approvals.action.showChequeRequest',[ $ApprovalTimeline->id,0,0]) }}" class="btn btn-success" tooltip="@lang('site.Show')"><i class="fas fa-eye"></i></a>
                                 @endif
 
-                                @if (auth()->user()->name_en == "Michel Gerges Michael Tadros")
-                                    <a href="{{ route('approvals.action.approve.business', $ApprovalTimeline->id) }}" class="btn btn-success" tooltip="@lang('site.send_business')"><i class="fas fa-paper-plane"></i></a>
-                                @endif
+
+
+
 
                                 @if ($ApprovalTimeline->username == "michel.gerges" && auth()->user()->hasRole('super_admin'))
+                                @php
+                                $idBusiness = App\Models\ApprovalTimeline::where("record_id",$ApprovalTimeline->record_id)->where("business_action",2)->first();
+                                @endphp
+                                @if (!$idBusiness)
                                     <a href="{{ route('approvals.action.approve.business', $ApprovalTimeline->id) }}" class="btn btn-success" tooltip="@lang('site.send_business')"><i class="fas fa-paper-plane"></i></a>
+                                @endif
                                 @endif
 
                                 <a data-approval_time="{{ $ApprovalTimeline->id }}" data-user = "{{$ApprovalTimeline->username }}"  data-type='approval' data-toggle="modal" data-target="#confirm_modal" class="btn btn-success" data-pur="{{ $ApprovalTimeline->table_name }}" data-toggle="modal" tooltip="@lang('site.approve_comment')"><i class="fas fa-comment-dots"></i></a>

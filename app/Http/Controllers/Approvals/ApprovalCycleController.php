@@ -801,10 +801,12 @@ class ApprovalCycleController extends Controller
                 // $purchase->update([
                 //     "approved" => 1
                 // ]);
+
                 $approvalTimeline->update([
                     'approval_status' => 'A',
                     "action_id" => \Auth::user()->id,
                 ]);
+
 
                 $currentApprovalCycleApprovalStep = $approvalTimeline->approvalCycleApprovalStep;
                 $nextApprovalCycleApprovalStep = $currentApprovalCycleApprovalStep->next;
@@ -946,11 +948,13 @@ class ApprovalCycleController extends Controller
             $creatorUser = $model::findOrFail($approvalTimeline->record_id)->requester;
             try {
 
-                $approvalTimeline->update([
-                    'approval_status' => 'A',
-                    "action_id" => \Auth::user()->id,
-                ]);
-
+                $purchaseRequest = PurchaseRequest::find($approvalTimeline->record_id);
+                if($purchaseRequest->group->code != "IT-01") {
+                    $approvalTimeline->update([
+                        'approval_status' => 'A',
+                        "action_id" => \Auth::user()->id,
+                    ]);
+                }
                 $currentApprovalCycleApprovalStep = $approvalTimeline->approvalCycleApprovalStep;
 
                 $previousApprovalCycleApprovalStep = $currentApprovalCycleApprovalStep->previous;

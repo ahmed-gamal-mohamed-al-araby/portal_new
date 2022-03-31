@@ -647,56 +647,73 @@ class PurchaseRequestsController extends Controller
           $purchaseRequest->group;
           // Set first approval cycle timeline
 
-          $approvalTimeline = ApprovalTimeline::create([
-              'table_name' => 'purchase_requests',
-              'record_id' => $purchaseRequest->id,
-              'approval_cycle_approval_step_id' => $approvalCycleApprovalStep->id,
-              'user_id' => $approvalUser->id,
-          ]);
+          if($purchaseRequest->group->code == "IT-01") {
 
-          /****/
+            ApprovalTimeline::create([
+                'table_name' => 'purchase_requests',
+                'record_id' => $purchaseRequest->id,
+                'approval_cycle_approval_step_id' => $approvalCycleApprovalStep->id,
+                'user_id' => $approvalUser->id,
+            ]);
 
-          $approvalTimeline->update([
-              'approval_status' => 'A',
-              "action_id" => \Auth::user()->id,
-          ]);
-
-          $currentApprovalCycleApprovalStep = $approvalTimeline->approvalCycleApprovalStep;
-          $nextApprovalCycleApprovalStep = $currentApprovalCycleApprovalStep->next;
-
-          if ($nextApprovalCycleApprovalStep) { // check if there is next approval cycle
-
-              $stepValue =  json_decode($nextApprovalCycleApprovalStep->approvalStep->value);
-              $nextApprovalUser = '';
-
-              if (count($stepValue->depth)) {
-                  $nextApprovalUser = $creatorUser;
-                  foreach ($stepValue->depth as $step) {
-                      if ($nextApprovalUser->{$step}) {
-                          $nextApprovalUser = $nextApprovalUser->{$step};
-                      }
-                  }
-              } else {
-                  $nextApprovalUser = $this->getComplexNextUserForApprovals($stepValue->query->T, $stepValue->query->CONs,  $stepValue->query->depth);
-              }
-
-              ApprovalTimeline::create([
-                  'table_name' => $approvalTimeline->table_name,
-                  'record_id' => $approvalTimeline->record_id,
-                  'approval_cycle_approval_step_id' => $nextApprovalCycleApprovalStep->id,
-                  'user_id' => $nextApprovalUser->id, // next user in cycle
-              ]);
-
-              $this->getSuccess();
           } else {
-              $this->getSuccessToastrMessage('DONE');
-              // Here update table record id approval_status To Approved
-              /*
-                  *
-                  *
-                  *
-              */
+
+            $approvalTimeline = ApprovalTimeline::create([
+                'table_name' => 'purchase_requests',
+                'record_id' => $purchaseRequest->id,
+                'approval_cycle_approval_step_id' => $approvalCycleApprovalStep->id,
+                'user_id' => $approvalUser->id,
+            ]);
+
+            /****/
+
+            $approvalTimeline->update([
+                'approval_status' => 'A',
+                "action_id" => \Auth::user()->id,
+            ]);
+
+            $currentApprovalCycleApprovalStep = $approvalTimeline->approvalCycleApprovalStep;
+            $nextApprovalCycleApprovalStep = $currentApprovalCycleApprovalStep->next;
+
+            if ($nextApprovalCycleApprovalStep) { // check if there is next approval cycle
+
+                $stepValue =  json_decode($nextApprovalCycleApprovalStep->approvalStep->value);
+                $nextApprovalUser = '';
+
+                if (count($stepValue->depth)) {
+                    $nextApprovalUser = $creatorUser;
+                    foreach ($stepValue->depth as $step) {
+                        if ($nextApprovalUser->{$step}) {
+                            $nextApprovalUser = $nextApprovalUser->{$step};
+                        }
+                    }
+                } else {
+                    $nextApprovalUser = $this->getComplexNextUserForApprovals($stepValue->query->T, $stepValue->query->CONs,  $stepValue->query->depth);
+                }
+
+                ApprovalTimeline::create([
+                    'table_name' => $approvalTimeline->table_name,
+                    'record_id' => $approvalTimeline->record_id,
+                    'approval_cycle_approval_step_id' => $nextApprovalCycleApprovalStep->id,
+                    'user_id' => $nextApprovalUser->id, // next user in cycle
+                ]);
+
+                $this->getSuccess();
+            } else {
+                $this->getSuccessToastrMessage('DONE');
+                // Here update table record id approval_status To Approved
+                /*
+                    *
+                    *
+                    *
+                */
+            }
+
           }
+
+
+
+
 
           // Notification for creator
 
