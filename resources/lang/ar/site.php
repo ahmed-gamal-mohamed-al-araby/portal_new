@@ -803,5 +803,6 @@ return [
     "purchase_unchallenged" => "طلبات لم يتم تحديدها",
     "purchase_type" => "نوع الطلب",
     "not_determined" => "لم يتم التحديد",
-    "purchase_order_status" => "نوع امر التوريد"
+    "purchase_order_status" => "نوع امر التوريد",
+    "user" => "مستخدم"
 ];

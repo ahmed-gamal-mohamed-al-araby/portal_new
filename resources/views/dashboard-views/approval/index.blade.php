@@ -21,11 +21,8 @@ $name = 'name_' . $currentLanguage;
 <style>
     .direct {
         display: flex;
-<<<<<<< HEAD
-=======
     }.test {
         display: none;
->>>>>>> 902a061972793ade7915e3f2b2f812e1a50d2ac6
     }
 </style>
 @endsection
@@ -123,8 +120,6 @@ $name = 'name_' . $currentLanguage;
                                      
 
                             @endif
-<<<<<<< HEAD
-=======
                         @if (auth()->user()->hasRole("super_admin"))
                         <div class="test">
                             <div class="row purchase_type_top approve_only">
@@ -155,7 +150,6 @@ $name = 'name_' . $currentLanguage;
                                     </div>
                         </div>
                         @endif
->>>>>>> 902a061972793ade7915e3f2b2f812e1a50d2ac6
 
 
                         <textarea name="comment"  class="form-control mb-3"  id="modal-body" cols="30" rows="10" ></textarea>
@@ -270,14 +264,10 @@ $name = 'name_' . $currentLanguage;
                 }
 
                 if(user == "michel.gerges") {
-<<<<<<< HEAD
-                    $(".approve_only").css("display",'flex');
-=======
                     $(".test").show();
                 } else {
                     $(".test").hide();
 
->>>>>>> 902a061972793ade7915e3f2b2f812e1a50d2ac6
                 }
 
                 if(confirmModalType != "approval") {
@@ -374,4 +364,3 @@ $name = 'name_' . $currentLanguage;
         $(".sort-table").tablesorter();
     </script>
 @endsection
-
