@@ -483,7 +483,7 @@ $currentLanguage = app()->getLocale();
                                                 <div class="col-md-6">
                                                     <div class="input-group mb-3">
                                                         <input type="file" name="file[]"
-                                                            class="custom-file-input  w-auto ml-auto" id="">
+                                                            class="custom-file-input file-upload w-auto ml-auto" id="">
                                                         <div class="text-danger d-none required-validate-error mb-3">
                                                             @lang('site.data-required')
                                                         </div>
@@ -694,7 +694,7 @@ $currentLanguage = app()->getLocale();
                                                 <div class="col-md-6">
                                                     <div class="input-group mb-3">
                                                         <input type="file" name="file[]"
-                                                            class="custom-file-input  w-auto ml-auto" value="null" id="">
+                                                            class="custom-file-input file-upload w-auto ml-auto" value="null" id="">
 
                                                         <label class="custom-file-label text-overflow-dots rounded-0 m-0"
                                                             style=" text-overflow: ellipsis; overflow: hidden; color: #999"
@@ -754,8 +754,11 @@ $currentLanguage = app()->getLocale();
                             </div>
                             <div class="col-md-6">
                                 <div class="input-group mb-3">
+                                    <label for="file-upload" class="custom-file-upload">
+                                        <i class="fa fa-cloud-upload"></i> Upload Image
+                                      </label>
                                     <input type="file" name="file_purchase_request[]" multiple
-                                        class="custom-file-input  w-auto ml-auto" value="null" id="">
+                                        class="custom-file-input file-upload  w-auto ml-auto" value="null" id="">
 
                                     <label class="custom-file-label text-overflow-dots rounded-0 m-0"
                                         style=" text-overflow: ellipsis; overflow: hidden; color: #999" for="logo_image_id">
@@ -811,6 +814,13 @@ $currentLanguage = app()->getLocale();
     <script src="{{ asset('plugins/jquery-validation/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('plugins/jquery-validation/additional-methods.min.js') }}"></script>
     <script src="{{ asset('plugins/jquery/shake.js') }}"></script>
+    <script>
+        $('.file-upload').change(function() {
+          var i = $(this).prev('label').clone();
+          var file = $(this)[0].files[0].name;
+            $(this).prev('label').text(file);
+        });
+    </script>
     <script>
         $('input[type=file]').on('change', function() {
             $(this).next().text($(this).val());
@@ -895,6 +905,7 @@ $currentLanguage = app()->getLocale();
                 $new.find('.purchaseRequestId').val('');
                 $table.append($new);
                 $new.find('input[type=text]').val('');
+                $new.find('input[type=file]').val('');
                 $new.find('input[type=number]').val('');
                 $new.find('textarea').val('');
                 $new.find('input[type=number]').prop('readonly', false);
@@ -1244,11 +1255,6 @@ $currentLanguage = app()->getLocale();
                 <input type="hidden" name="items[]" value="any">
 
 
-
-
-
-
-
                 </div>
 
                 <div class="form-row m-1 no-gutters">
@@ -1364,7 +1370,7 @@ $currentLanguage = app()->getLocale();
                 <div class="col-md-4 mt-1">
                     <div class="input-group mb-3">
                         <input type="file" name="file[]"
-                            class="custom-file-input  w-auto ml-auto" value="null" id="">
+                            class="custom-file-input file-upload w-auto ml-auto" value="null" id="">
 
                         <label class="custom-file-label text-overflow-dots rounded-0 m-0"
                             style=" text-overflow: ellipsis; overflow: hidden; color: #999"
@@ -1609,7 +1615,7 @@ $currentLanguage = app()->getLocale();
                     {{-- Logo --}}
                     <div class="col-md-6">
                         <div class="input-group mb-3">
-                            <input type="file" name="file[]" class="custom-file-input  w-auto ml-auto" value="null" id="">
+                            <input type="file" name="file[]" class="custom-file-input file-upload w-auto ml-auto" value="null" id="">
 
                             <label class="custom-file-label text-overflow-dots rounded-0 m-0"
                                 style=" text-overflow: ellipsis; overflow: hidden; color: #999" for="logo_image_id">

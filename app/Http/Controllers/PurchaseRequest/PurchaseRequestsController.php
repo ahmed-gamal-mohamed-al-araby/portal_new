@@ -647,7 +647,7 @@ class PurchaseRequestsController extends Controller
           $purchaseRequest->group;
           // Set first approval cycle timeline
 
-          if($purchaseRequest->group->code == "IT-01") {
+          if($purchaseRequest->group->code == "IT-01" ||  $purchaseRequest->group->code == "stationary") {
 
             ApprovalTimeline::create([
                 'table_name' => 'purchase_requests',
