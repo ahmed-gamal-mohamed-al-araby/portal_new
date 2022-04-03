@@ -116,6 +116,11 @@ $currentLanguage = app()->getLocale();
                                                             class="custom-select purchase_request_number" id="">
                                                             <option></option>
                                                             @foreach ($purchaseRequests as $purchaseRequest)
+                                                            @if (auth()->user()->department)
+                                                            @if (auth()->user()->department->name_en == "Internal Purchasing")
+
+                                                                @if ($purchaseRequest->purchase_type == "purchase_in"  ||  $purchaseRequest->purchase_type == "both")
+
                                                                 <option value="{{ $purchaseRequest->id }}" @foreach ($purchaseReqId as $purID)
                                                                     @if ($purID == $purchaseRequest->id)
                                                                         selected
@@ -125,6 +130,25 @@ $currentLanguage = app()->getLocale();
                                                             @if (old('supplier_id') == $supplier->id) {{ 'selected' }} @endif>
                                                             {{ $purchaseRequest->request_number }}
                                                             </option>
+                                                                    @endif
+                                                                    @endif
+                                                                    @if (auth()->user()->department->name_en == "External Purchasing")
+
+                                                                @if ($purchaseRequest->purchase_type == "purchase_out"  ||  $purchaseRequest->purchase_type == "both")
+
+                                                                <option value="{{ $purchaseRequest->id }}" @foreach ($purchaseReqId as $purID)
+                                                                    @if ($purID == $purchaseRequest->id)
+                                                                        selected
+                                                                    @endif
+                                                            @endforeach
+                                                            data-toggle="tooltip" data-placement="top" title="Supplier Name"
+                                                            @if (old('supplier_id') == $supplier->id) {{ 'selected' }} @endif>
+                                                            {{ $purchaseRequest->request_number }}
+                                                            </option>
+                                                                    @endif
+                                                                    @endif
+                                                                @endif
+
                                                             @endforeach
                                                         </select>
 
@@ -394,11 +418,8 @@ $currentLanguage = app()->getLocale();
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-12 mb-3">
-                                                    <button type="button" class="calculate btn btn-info btn-sm">
-                                                        @lang("site.Calculate")
-                                                    </button>
-                                                </div>
+                                                <div class="col-md-8"></div>
+
 
                                                 <div class="col-md-6">
                                                     <div class="form-group">
@@ -467,13 +488,14 @@ $currentLanguage = app()->getLocale();
 
                                     </div>
 
-
-
+                                    <button type="button" class="calculate btn btn-info s">
+                                        @lang("site.Calculate")
+                                    </button>
+                                    <button class="btn btn-primary m-1" name="save" value="1" type="submit"
+                                    data-toggle="tooltip" data-placement="top" title="Save" id="save">@lang("site.save")</button>
                                     {{-- Purchase order action --}}
                                     <div class="row">
-                                        <button class="btn btn-primary m-1" name="save" value="1" type="submit"
-                                            data-toggle="tooltip" data-placement="top" title="Save" id="save"><i
-                                                class="far fa-save"></i></button>
+
                                         <!-- <button class="btn btn-success m-1" name="saveandsend" type="submit" data-toggle="tooltip"
                                         data-placement="top" title="Save & Send" value="1" id="save_and_send"><i
                                             class="fas fa-paper-plane"></i></button> -->

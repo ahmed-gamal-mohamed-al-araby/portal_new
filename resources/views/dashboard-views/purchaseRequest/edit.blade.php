@@ -158,21 +158,21 @@ $currentLanguage = app()->getLocale();
                                 </div>
 
                                     {{-- site --}}
-                                    <div class="col-md-6  site-section  @if (!$userData['project']) {{ 'd-none' }} @endif   ">
+                                    <div class="col-md-6  site-section  @if (!$purchaseRequest->project_id) {{ 'd-none' }} @endif   ">
                                         <div class="input-group input-group-sm mb-2">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"
                                                     id="inputGroup-sizing-sm">@lang('site.Sites')</span>
                                             </div>
                                             <select name="site_id" class="custom-select" id="site" required
-                                                @if (!$userData['project']) {{ 'disabled' }} @endif>
-                                                @if ($userData['project'])
+                                                >
+                                                @if ($purchaseRequest->site_id)
                                                     <option></option>
                                                     @foreach ($sites as $site)
-                                                    @if ($site->id === $purchaseRequest->site_id)
-                                                        <option value="{{ $site->id }}" @if ($site->id === $purchaseRequest->site_id) {{ 'selected' }} @endif>
-                                                            {{ $site['name_' . $currentLanguage] }}</option>
-                                                    @endif
+                                                        @if ($site->id == $purchaseRequest->site_id)
+                                                            <option value="{{ $site->id }}" @if ($site->id == $purchaseRequest->site_id) {{ 'selected' }} @endif>
+                                                                {{ $site['name_' . $currentLanguage] }}</option>
+                                                        @endif
                                                     @endforeach
 
                                                 @endif
@@ -233,6 +233,7 @@ $currentLanguage = app()->getLocale();
                                     </div>
                                 </div>
                             </div>
+
 
                             {{-- Items per purchase request --}}
                             <div class="card mt-3">
@@ -421,6 +422,12 @@ $currentLanguage = app()->getLocale();
                                                                 @enderror
                                                             </div>
 
+
+
+
+
+
+
                                                             {{-- Priority --}}
                                                             <div class="col-md-2 mb-1">
                                                                 <div class="form-row m-0">
@@ -495,25 +502,54 @@ $currentLanguage = app()->getLocale();
 
                                         @endforelse
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="input-group mb-3">
-                                            <input type="file" name="file_purchase_request[]" multiple
-                                                class="custom-file-input  w-auto ml-auto" value="null" id="">
 
-                                            <label class="custom-file-label text-overflow-dots rounded-0 m-0"
-                                                style=" text-overflow: ellipsis; overflow: hidden; color: #999"
-                                                for="logo_image_id">
-                                                @lang('site.add_file')
+                            @if ($purchaseRequest->ApprovalTimeline->count() > 0)
+                                @php
+                                $approId = $purchaseRequest->ApprovalTimeline->last()->id;
+                                $userAction = App\Models\ApprovalTimeline::find($approId)->action_id;
+                                $user = App\Models\User::find($userAction);
+                                $commentAllPr = App\Models\ApprovalTimelineComment::where("approval_timeline_id",$approId)->first()->comment;
+                                @endphp
+                            @endif
 
-                                            </label>
-                                            <div class="text-danger d-none required-validate-error mb-3">
-                                                @lang('site.data-required')
-                                            </div>
-                                        </div>
-                                        @error('file_purchase_request')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
+
+                            {{-- Comment PR --}}
+                         <div class="row">
+                            <div class="col-md-6">
+                                <div class="input-group mb-3">
+                                    <input type="file" name="file_purchase_request[]" multiple
+                                        class="custom-file-input  w-auto ml-auto" value="null" id="">
+
+                                    <label class="custom-file-label text-overflow-dots rounded-0 m-0"
+                                        style=" text-overflow: ellipsis; overflow: hidden; color: #999"
+                                        for="logo_image_id">
+                                        @lang('site.add_file')
+
+                                    </label>
+                                    <div class="text-danger d-none required-validate-error mb-3">
+                                        @lang('site.data-required')
                                     </div>
+                                </div>
+                                @error('file_purchase_request')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-6"></div>
+                            @if ($purchaseRequest->ApprovalTimeline->count() > 0)
+
+                        <div class="col-md-6  mb-1 no-gutters">
+                            <div class="col-md-12">
+                            <label for="">  ملاحظات من :  {{$user['name_'.$currentLanguage]}}</label>
+                            <textarea type="text"
+                                placeholder="@lang('site.Add') @lang('site.Comment')" readonly
+                                class="form-control" rows="3"
+                                cols="10">{{$commentAllPr}}</textarea>
+                            </div>
+
+                            </div>
+                        @endif
+
+                     </div>
 
 
                                           {{-- Comment_revert --}}
@@ -627,7 +663,7 @@ $currentLanguage = app()->getLocale();
 
                 {{-- Specification --}}
                 <div class="col-md-3  mb-1">
-                    <textarea type="text" name="specifications[]" readonly
+                    <textarea type="text" name="specifications[]"
                         placeholder="@lang('site.product_name')"
                         class="form-control specification" data-toggle="tooltip"
                         data-placement="top" cols="1" rows="1"
@@ -640,7 +676,7 @@ $currentLanguage = app()->getLocale();
                 {{-- factory_specification --}}
                 <div class="col-md-3 mb-1 no-gutters factory_specification">
                     <div class="col-md-12">
-                        <textarea type="text" name="factory_specification[]" readonly
+                        <textarea type="text" name="factory_specification[]"
                             placeholder="@lang('site.specifications')" cols="1"
                             rows="1" class="factory_specification form-control">{{$item->factory_specification}}</textarea>
                     </div>
@@ -656,7 +692,7 @@ $currentLanguage = app()->getLocale();
 
                         {{-- Units --}}
                         <div class="col-md-3 mb-1">
-                            <select name="units_id[]" class="form-control unit" data-toggle="tooltip" disabled
+                            <select name="units_id[]" class="form-control unit" data-toggle="tooltip"
                                 data-placement="top" title="Unit">
                                 <option value="" hidden>
                                     @lang('site.Unit')
@@ -671,7 +707,7 @@ $currentLanguage = app()->getLocale();
 
                         {{-- Quantity required --}}
                         <div class="col mb-1 pl-md-0 pl-lg-1">
-                            <input type="number" name="quantities[]" readonly
+                            <input type="number" name="quantities[]"
                                 placeholder="@lang('site.quantity_required')"
                                 class="form-control qrtp" min=1 data-toggle="tooltip"  value="{{$item->quantity}}"
                                 data-placement="top" title="QTY Required" />
@@ -684,7 +720,7 @@ $currentLanguage = app()->getLocale();
 
                         {{-- Quantity in store --}}
                         <div class="col-md-3 mb-1 no-gutters">
-                            <input type="number" name="stock_quantities[]" readonly title="@lang('site.quantity_in_store')"
+                            <input type="number" name="stock_quantities[]"  title="@lang('site.quantity_in_store')"
                                 placeholder="@lang('site.quantity_in_store')" class="form-control qos required-data"
                                 value="{{ $item->stock_quantity }}" min="0" />
                             {{-- Validation --}}
@@ -695,7 +731,7 @@ $currentLanguage = app()->getLocale();
 
                         {{-- reserved_quantity --}}
                         <div class="col mb-1 mt-1 pl-md-0 pl-lg-1  ">
-                            <input type="number" name="reserved_quantity[]" readonly title="@lang('site.reserved_quantity')"
+                            <input type="number" name="reserved_quantity[]"  title="@lang('site.reserved_quantity')"
                                 placeholder="@lang('site.reserved_quantity')"
                                 class="form-control reserved_quantity" min=1
                                 value="{{$item->reserved_quantity}}" />
@@ -708,7 +744,7 @@ $currentLanguage = app()->getLocale();
 
                         {{-- Actual quantity --}}
                         <div class="col-md-3 mb-1 no-gutters">
-                            <input type="number" name="actual_quantities[]" disabled title="@lang('site.actual_quantity')"
+                            <input type="number" name="actual_quantities[]"  title="@lang('site.actual_quantity')"
                                 placeholder="@lang('site.actual_quantity')" class="form-control aqrtp"
                                 value="{{ $item->actual_quantity }}" min="0" />
                         </div>
@@ -718,7 +754,7 @@ $currentLanguage = app()->getLocale();
 
                 {{-- max_date_delivery --}}
                 <div class="col-md-4 mb-1 mt-1 ">
-                    <input type="text" name="max_date_delivery[]" readonly
+                    <input type="text" name="max_date_delivery[]"
                         onfocus="(this.type='date')" placeholder="@lang("site.max_date_delivery")" class="form-control max_date_delivery"
                         id="" value="{{$item->max_date_delivery}}">
                     {{-- Validation --}}
@@ -729,7 +765,7 @@ $currentLanguage = app()->getLocale();
 
                 {{-- start_date_supply --}}
                 <div class="col-md-4 mb-1 mt-1 ">
-                    <input type="text" name="start_date_supply[]" readonly
+                    <input type="text" name="start_date_supply[]"
                         onfocus="(this.type='date')" placeholder="@lang("site.start_date_supply")" class="form-control start_date_supply"
                         id="" value="{{$item->start_date_supply}}">
                     {{-- Validation --}}
@@ -750,7 +786,7 @@ $currentLanguage = app()->getLocale();
                 {{-- Logo --}}
                 <div class="col-md-4 mt-1">
                     <div class="input-group mb-3">
-                        <input type="file" name="file[]" disabled
+                        <input type="file" name="file[]"
                             class="custom-file-input  w-auto ml-auto" value="null" id="">
 
                         <label class="custom-file-label text-overflow-dots rounded-0 m-0"
@@ -768,13 +804,15 @@ $currentLanguage = app()->getLocale();
                     @enderror
                 </div>
 
+
+
                 {{-- Priority --}}
                 <div class="col-md-6 mb-1 d-none">
                     <div class="form-row m-0">
                         {{-- <div class="col-md-12"> --}}
                         <select name="priorities[]" id="priorities" class="form-control "
                             placeholder="priority" data-toggle="tooltip" data-placement="top" title="priority">
-                            <option selected disabled hidden>@lang('site.Priority')
+                            <option selected  hidden>@lang('site.Priority')
                             </option>
                             <option selected value="L">@lang('site.Priority_L')</option>
                             <option value="M">@lang('site.Priority_M')
@@ -799,17 +837,17 @@ $currentLanguage = app()->getLocale();
                 </div>
 
                 @if ($item->comment_refuse)
-                                        {{-- Comment_refuse --}}
-                                        <div class="col-md-6 mb-1 no-gutters">
-                                            <div class="col-md-12">
-                                                <textarea type="text" name="comment_refuse"
-                                                    placeholder="@lang('site.Add') @lang('site.comment_refuse')"
-                                                    class="form-control comment_refuse" rows="3" cols="10" title="@lang("
-                                                    site.comment_refuse") ....." data-toggle="tooltip" data-placement="top"
-                                                    readonly="true">{{ $item->comment_refuse }}</textarea>
-                                            </div>
-                                        </div>
-                                    @endif
+                        {{-- Comment_refuse --}}
+                        <div class="col-md-6 mb-1 no-gutters">
+                            <div class="col-md-12">
+                                <textarea type="text" name="comment_refuse"
+                                    placeholder="@lang('site.Add') @lang('site.comment_refuse')"
+                                    class="form-control comment_refuse" rows="3" cols="10" title="@lang("
+                                    site.comment_refuse") ....." data-toggle="tooltip" data-placement="top"
+                                    ="true">{{ $item->comment_refuse }}</textarea>
+                            </div>
+                        </div>
+                    @endif
             </div>
             {{-- ID --}}
             <input type="hidden" class="purchaseRequestId" name="ids[]"
@@ -859,7 +897,7 @@ $currentLanguage = app()->getLocale();
                                 <div class="form-row m-1 no-gutters">
                                     {{-- subGroup --}}
                                     <div class="col-12 col-md-6 col-lg-3 mb-1 pl-0">
-                                        <select  disabled class="form-control SelectProduct getSubGroup required-data" data-toggle="tooltip"
+                                        <select   class="form-control SelectProduct getSubGroup required-data" data-toggle="tooltip"
                                             data-placement="top" title="Sub Group">
                                             @foreach ($subGroups as $subGroup)
                                                 <option value="{{ $subGroup->id }}" data-toggle="tooltip" data-placement="top"
@@ -876,7 +914,7 @@ $currentLanguage = app()->getLocale();
 
                                     {{-- FamilyName --}}
                                     <div class="col-12 col-md-6 col-lg-3 mb-1">
-                                        <select  disabled name="family_names_id[]" class="form-control SelectItem Getitems required-data">
+                                        <select   name="family_names_id[]" class="form-control SelectItem Getitems required-data">
                                             @foreach ($item->familyName->subGroup->FamilyNames as $familyName)
                                                 <option value="{{ $familyName->id }}" data-toggle="tooltip" data-placement="top"
                                                     title="Item" @if ($familyName->id === $item->family_name_id) {{ 'selected' }} @endif>
@@ -896,7 +934,7 @@ $currentLanguage = app()->getLocale();
                                         <div class="form-row no-gutters">
                                             {{-- Quantity required --}}
                                             <div class="col-md-3 mb-1 pl-md-0 pl-lg-1">
-                                                <input type="number" name="quantities[]"  readonly placeholder="@lang('site.quantity_required')" title="@lang('site.quantity_required')"
+                                                <input type="number" name="quantities[]"   placeholder="@lang('site.quantity_required')" title="@lang('site.quantity_required')"
                                                     class="form-control qrtp required-data" min=1 data-toggle="tooltip"
                                                     data-placement="top" title="QTY Required" value="{{ $item->quantity }}" />
                                                 {{-- Validation --}}
@@ -908,7 +946,7 @@ $currentLanguage = app()->getLocale();
                                             {{-- Quantity in store --}}
                                             <div class="col-md-3 mb-1 no-gutters">
                                                 <input type="number" name="stock_quantities[]"  title="@lang('site.quantity_in_store')"
-                                                    placeholder="@lang('site.quantity_in_store')" readonly  class="form-control qos required-data"
+                                                    placeholder="@lang('site.quantity_in_store')"   class="form-control qos required-data"
                                                     value="{{ $item->stock_quantity }}" min="0" />
                                                 {{-- Validation --}}
                                                 <div class="text-danger d-none required-validate-error mb-3">
@@ -919,13 +957,13 @@ $currentLanguage = app()->getLocale();
                                             {{-- Actual quantity --}}
                                             <div class="col-md-3 mb-1 no-gutters">
                                                 <input type="number" name="actual_quantities[]" title="@lang('site.actual_quantity')"
-                                                    placeholder="@lang('site.actual_quantity')" readonly  class="form-control aqrtp"
+                                                    placeholder="@lang('site.actual_quantity')"   class="form-control aqrtp"
                                                     value="{{ $item->actual_quantity }}" min="0" />
                                             </div>
 
                                             {{-- Units --}}
                                             <div class="col-md-3 mb-1">
-                                                <select name="units_id[]" class="form-control unit" disabled  data-toggle="tooltip"
+                                                <select name="units_id[]" class="form-control unit"   data-toggle="tooltip"
                                                     data-placement="top" title="Unit">
                                                     <option value="" hidden>
                                                         @lang('site.Unit')
@@ -944,7 +982,7 @@ $currentLanguage = app()->getLocale();
 
                                     {{-- reserved_quantity --}}
                                     <div class="col-md-4 mb-1 mt-1 pl-md-0 pl-lg-1 d-none ">
-                                        <input type="number" name="reserved_quantity[]" readonly  value="{{ $item->reserved_quantity }}"
+                                        <input type="number" name="reserved_quantity[]"   value="{{ $item->reserved_quantity }}"
                                             placeholder="@lang('site.reserved_quantity')" class="form-control " min=1 title="@lang('site.reserved_quantity')"
                                             value="{{ old('reserved_quantity') }}" />
                                         {{-- Validation --}}
@@ -955,7 +993,7 @@ $currentLanguage = app()->getLocale();
 
                                     {{-- max_date_delivery --}}
                                     <div class="col-md-4 mb-1 mt-1 d-none">
-                                        <input type="text" name="max_date_delivery[]" readonly  value="{{ $item->max_date_delivery }}"
+                                        <input type="text" name="max_date_delivery[]"   value="{{ $item->max_date_delivery }}"
                                             onfocus="(this.type='date')" placeholder="@lang(" site.max_date_delivery")"
                                             class="form-control " id="">
                                         {{-- Validation --}}
@@ -980,7 +1018,7 @@ $currentLanguage = app()->getLocale();
                                     {{-- Specification --}}
                                     <div class="col-md-6 mb-1">
                                         {{-- <div class="col-md-12"> --}}
-                                        <textarea type="text" name="specifications[]" readonly
+                                        <textarea type="text" name="specifications[]"
                                             placeholder="@lang('site.Add') @lang('site.specifications')"
                                             class="form-control specification" value="{{ old('specifications.' . $index) ?? '' }}"
                                             rows="3" cols="10" data-toggle="tooltip" data-placement="top"
@@ -992,7 +1030,7 @@ $currentLanguage = app()->getLocale();
                                     {{-- Comment --}}
                                     <div class="col-md-6 mb-1 no-gutters comments">
                                         <div class="col-md-12">
-                                            <textarea type="text" name="comments[]" readonly
+                                            <textarea type="text" name="comments[]"
                                                 placeholder="@lang('site.Add') @lang('site.Comment')" class="form-control comments"
                                                 rows="3" cols="10" data-toggle="tooltip" data-placement="top"
                                                 title="Comment...">{{ $item->comment }}</textarea>
@@ -1011,7 +1049,7 @@ $currentLanguage = app()->getLocale();
                                     <div class="col-md-6 mb-1 priorities">
                                         <div class="form-row m-0">
                                             {{-- <div class="col-md-12"> --}}
-                                            <select name="priorities[]" id="priorities" disabled  class="form-control priority"
+                                            <select name="priorities[]" id="priorities"   class="form-control priority"
                                                 placeholder="priority" data-toggle="tooltip" data-placement="top" title="priority">
                                                 <option value="">@lang('site.Priority')
                                                 </option>
@@ -1025,7 +1063,7 @@ $currentLanguage = app()->getLocale();
 
                                             <div class="col-md-12  mb-1">
 
-                                                <textarea type="text" name="comment_reason[]" readonly placeholder="@lang('site.reason_period')"
+                                                <textarea type="text" name="comment_reason[]"  placeholder="@lang('site.reason_period')"
                                                     class="form-control comment_reason   @if ($item->comment_reason !== null)
                                                                                     edit_reason
                                                                                 @endif "
@@ -1046,7 +1084,7 @@ $currentLanguage = app()->getLocale();
                                     {{-- Logo --}}
                                     <div class="col-md-6">
                                         <div class="input-group mb-3">
-                                            <input type="file" name="file[]"  disabled class="custom-file-input  w-auto ml-auto" id="">
+                                            <input type="file" name="file[]"  class="custom-file-input  w-auto ml-auto" id="">
 
                                             <label class="custom-file-label text-overflow-dots rounded-0 m-0"
                                                 style=" text-overflow: ellipsis; overflow: hidden; color: #999" for="logo_image_id">
@@ -1069,10 +1107,11 @@ $currentLanguage = app()->getLocale();
                                                     placeholder="@lang('site.Add') @lang('site.comment_refuse')"
                                                     class="form-control comment_refuse" rows="3" cols="10" title="@lang("
                                                     site.comment_refuse") ....." data-toggle="tooltip" data-placement="top"
-                                                    readonly="true">{{ $item->comment_refuse }}</textarea>
+                                                   >{{ $item->comment_refuse }}</textarea>
                                             </div>
                                         </div>
                                     @endif
+
 
                                 </div>
 
@@ -1348,78 +1387,78 @@ $currentLanguage = app()->getLocale();
                 });
             });
 
-            // Copy item button
-            $(".copy_row").click(function(e) {
-                e.preventDefault();
-                $('#delete_row').show();
+            // // Copy item button
+            // $(".copy_row").click(function(e) {
+            //     e.preventDefault();
+            //     $('#delete_row').show();
 
-                $('.edit_row').show();
-                const $table = $('.table');
-                let $tr = $(this).parents('.tr');
+            //     $('.edit_row').show();
+            //     const $table = $('.table');
+            //     let $tr = $(this).parents('.tr');
 
-                $table.find('.tr').first().each(function() {
-                    // $(this).find('.productOrServiceSelect').select2("destroy");
-                    $(this).find(".SelectProduct").removeClass('productOrServiceSelect');
-                    // $(this).find('.getSubGroup').select2("destroy");
-                    $(this).find(".SelectProduct").removeClass('getSubGroup');
-                    // }
-                    // if ($(this).find(".Getitems")[0]){
-                    // $(this).find('.Getitems').select2("destroy");
-                    $(this).find(".SelectItem").removeClass('Getitems');
-                    $(this).find(".SelectProduct").removeClass('productOrServiceSelect').addClass(
-                        'productOrServiceSelect');
-                    $(this).find(".SelectProduct").removeClass('getSubGroup').addClass(
-                        'getSubGroup');
-                    $(this).find(".SelectItem").removeClass('Getitems').addClass('Getitems');
-                });
+            //     $table.find('.tr').first().each(function() {
+            //         // $(this).find('.productOrServiceSelect').select2("destroy");
+            //         $(this).find(".SelectProduct").removeClass('productOrServiceSelect');
+            //         // $(this).find('.getSubGroup').select2("destroy");
+            //         $(this).find(".SelectProduct").removeClass('getSubGroup');
+            //         // }
+            //         // if ($(this).find(".Getitems")[0]){
+            //         // $(this).find('.Getitems').select2("destroy");
+            //         $(this).find(".SelectItem").removeClass('Getitems');
+            //         $(this).find(".SelectProduct").removeClass('productOrServiceSelect').addClass(
+            //             'productOrServiceSelect');
+            //         $(this).find(".SelectProduct").removeClass('getSubGroup').addClass(
+            //             'getSubGroup');
+            //         $(this).find(".SelectItem").removeClass('Getitems').addClass('Getitems');
+            //     });
 
-                $table.find('input[type=number]').prop('readonly', true);
-                $table.find('input[type=text]').prop('readonly', true);
-                $table.find('input[type=date]').prop('readonly', true);
-                $table.find('textarea').prop('readonly', true);
-                $table.find('select').attr("disabled", true);
-                $tr.find(".SelectProduct").removeClass('productOrServiceSelect').addClass(
-                    'productOrServiceSelect');
-                $tr.find(".SelectProduct").removeClass('getSubGroup').addClass('getSubGroup');
-                $tr.find(".SelectItem").removeClass('Getitems').addClass('Getitems');
+            //     $table.find('input[type=number]').prop('readonly', true);
+            //     $table.find('input[type=text]').prop('readonly', true);
+            //     $table.find('input[type=date]').prop('readonly', true);
+            //     $table.find('textarea').prop('readonly', true);
+            //     $table.find('select').attr("disabled", true);
+            //     $tr.find(".SelectProduct").removeClass('productOrServiceSelect').addClass(
+            //         'productOrServiceSelect');
+            //     $tr.find(".SelectProduct").removeClass('getSubGroup').addClass('getSubGroup');
+            //     $tr.find(".SelectItem").removeClass('Getitems').addClass('Getitems');
 
-                let $new = $tr.clone(true);
-                $tr.after($new);
+            //     let $new = $tr.clone(true);
+            //     $tr.after($new);
 
-                $new.find('input[type=number]').prop('readonly', false);
-                $new.find('input[type=text]').prop('readonly', false);
-                $new.find('input[type=date]').prop('readonly', false);
-                $new.find('input[type=file]').next().text("");
-                $new.find('textarea').prop('readonly', false);
-                $new.find('select').attr("disabled", false);
-                $new.find('input[type=file]').prop('disabled', false);
-                $new.find('select').val(function(index, value) {
-                    return $tr.find('select').eq(index).val();
-                });
-                $new.find('select,input,textarea').css("border", "1px solid #ced4da"); //#ced4da
-                $new.find('.edit_row').hide();
+            //     $new.find('input[type=number]').prop('readonly', false);
+            //     $new.find('input[type=text]').prop('readonly', false);
+            //     $new.find('input[type=date]').prop('readonly', false);
+            //     $new.find('input[type=file]').next().text("");
+            //     $new.find('textarea').prop('readonly', false);
+            //     $new.find('select').attr("disabled", false);
+            //     $new.find('input[type=file]').prop('disabled', false);
+            //     $new.find('select').val(function(index, value) {
+            //         return $tr.find('select').eq(index).val();
+            //     });
+            //     $new.find('select,input,textarea').css("border", "1px solid #ced4da"); //#ced4da
+            //     $new.find('.edit_row').hide();
 
-                $(".SelectProduct").removeClass('productOrServiceSelect').addClass(
-                    'productOrServiceSelect');
-                $(".SelectProduct").removeClass('getSubGroup').addClass('getSubGroup');
-                $(".SelectItem").removeClass('Getitems').addClass('Getitems');
-                $new.find('.productOrServiceSelect').select2();
-                $new.find('.getSubGroup').select2();
-                $new.find('.getSubGroup').select2({
-                    placeholder: "@lang('site.choose') @lang('site.small_sub_group')",
-                });
-                $new.find('.Getitems').select2();
-                $new.find('.Getitems').select2({
-                    placeholder: "@lang('site.choose') @lang('site.small_family_name')",
-                });
+            //     $(".SelectProduct").removeClass('productOrServiceSelect').addClass(
+            //         'productOrServiceSelect');
+            //     $(".SelectProduct").removeClass('getSubGroup').addClass('getSubGroup');
+            //     $(".SelectItem").removeClass('Getitems').addClass('Getitems');
+            //     $new.find('.productOrServiceSelect').select2();
+            //     $new.find('.getSubGroup').select2();
+            //     $new.find('.getSubGroup').select2({
+            //         placeholder: "@lang('site.choose') @lang('site.small_sub_group')",
+            //     });
+            //     $new.find('.Getitems').select2();
+            //     $new.find('.Getitems').select2({
+            //         placeholder: "@lang('site.choose') @lang('site.small_family_name')",
+            //     });
 
-                $new.find('.select2.select2-container.select2-container--default').next(
-                    '.select2.select2-container.select2-container--default').each(function(index,
-                    element) {
-                    $(element).remove();
-                })
+            //     $new.find('.select2.select2-container.select2-container--default').next(
+            //         '.select2.select2-container.select2-container--default').each(function(index,
+            //         element) {
+            //         $(element).remove();
+            //     })
 
-            });
+            // });
 
             // Delete item button
             $(".delete_row").click(function(e) {
