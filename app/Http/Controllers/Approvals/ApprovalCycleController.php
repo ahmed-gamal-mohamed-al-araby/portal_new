@@ -1096,18 +1096,18 @@ class ApprovalCycleController extends Controller
 
         if (Auth::user()->can('timeline-purchase-request-super')) {
             $purchaseRequestId = PurchaseRequest::pluck("id");
+
         }
         elseif(Auth::user()->can('internal_purchases')){
-            $purchaseRequestId = PurchaseRequest::orWhere("requester_id",auth()->user()->id)->where("purchase_type" , "purchase_in")->orWhere("purchase_type" , "both")->pluck("id");
+            $purchaseRequestId = PurchaseRequest::where("purchase_type" , "purchase_in")->orWhere("requester_id",auth()->user()->id)->orWhere("purchase_type" , "both")->pluck("id");
 
         }
         elseif(Auth::user()->can('external_purchases')){
-            $purchaseRequestId = PurchaseRequest::orWhere("requester_id",auth()->user()->id)->where("purchase_type" , "purchase_out")->orWhere("purchase_type" , "both")->pluck("id");
-
+            $purchaseRequestId = PurchaseRequest::where("purchase_type" , "purchase_out")->orWhere("requester_id",auth()->user()->id)->orWhere("purchase_type" , "both")->pluck("id");
         }
 
         else {
-            $purchaseRequestId = PurchaseRequest::orWhere("requester_id",auth()->user()->id)->where("sector_id" , auth()->user()->sector->id)->pluck("id");
+            $purchaseRequestId = PurchaseRequest::where("sector_id" , auth()->user()->sector->id)->pluck("id");
         }
 
         $approvalTimelines = ApprovalTimeline::whereIn("record_id",$purchaseRequestId)->where("table_name", "purchase_requests")->groupby("record_id")->distinct()->get();
@@ -1200,17 +1200,17 @@ class ApprovalCycleController extends Controller
             $purchaseRequestsId = PurchaseRequest::pluck("id");
         }
         elseif(Auth::user()->can('internal_purchases')){
-            $purchaseRequestsId = PurchaseRequest::orWhere("requester_id",auth()->user()->id)->where("purchase_type" , "purchase_in")->pluck("id");
+            $purchaseRequestsId = PurchaseRequest::where("purchase_type" , "purchase_in")->orWhere("requester_id",auth()->user()->id)->pluck("id");
 
         }
         elseif(Auth::user()->can('external_purchases')){
-            $purchaseRequestsId = PurchaseRequest::orWhere("requester_id",auth()->user()->id)->where("purchase_type" , "purchase_out")->pluck("id");
+            $purchaseRequestsId = PurchaseRequest::where("purchase_type" , "purchase_out")->orWhere("requester_id",auth()->user()->id)->pluck("id");
 
         }
 
 
         else {
-            $purchaseRequestsId = PurchaseRequest::orWhere("requester_id",auth()->user()->id)-> where("sector_id" , auth()->user()->sector->id)->pluck("id");
+            $purchaseRequestsId = PurchaseRequest::where("sector_id" , auth()->user()->sector->id)->orWhere("requester_id",auth()->user()->id)->pluck("id");
         }
 
         $approvalTimelines = ApprovalTimeline::whereIn("record_id",$purchaseRequestsId)->where("table_name", "purchase_requests")->groupby("record_id")->join('approval_cycle_approval_steps', 'approval_timelines.approval_cycle_approval_step_id', 'approval_cycle_approval_steps.id')
