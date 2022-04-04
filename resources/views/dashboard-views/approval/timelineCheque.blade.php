@@ -137,7 +137,7 @@ $name = 'name_' . $currentLanguage;
                             {{-- <p class=" float-right"> @lang('site.created_at') : {{$created_at}} </p>
 
                             <p class=" float-left"> @lang('site.creator') : {{ $user['name_' . $currentLanguage] }}  </p> --}}
-                            <p class="text-center mb-0"> {{ $cycleName->$name . " ( $codeOrId )" }} </p>
+                            <p class="text-center mb-0"> {{ $cycleName->$name }} </p>
                         </div>
                         <div class="card-body text-center">
                             <div class="row">

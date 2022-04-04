@@ -364,4 +364,3 @@ $name = 'name_' . $currentLanguage;
         $(".sort-table").tablesorter();
     </script>
 @endsection
-

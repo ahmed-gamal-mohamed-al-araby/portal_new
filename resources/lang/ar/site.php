@@ -663,7 +663,7 @@ return [
     "total_gross" => "المجموع الاجمالي",
     "taxes" => "ضريبة قيمه مضافه",
     "taxes_value" => "ضريبة القيمه المضافه",
-    "withholding" => "ضريبة قيمة خصم",
+    "withholding" => " قيمة ضريبة الخصم",
     "net_total" => "الاجمالي الصافي",
     "suppling_duration" => "مدة التوريد",
     "delivery_place" => "مكان الاستلام",
@@ -695,11 +695,11 @@ return [
     "quantity_purchase" => "الكمية المطلوب شرائها",
 
     // currency
-    "type_discount" => "نوع الخصم",
+    "type_discount" => "نوع الخصم الخاص",
     "egypt" => "مصري",
     "dollar" => "دولار",
     "euro" => "يورو",
-    "discount" => "الخصم",
+    "discount" => "قيمة الخصم الخاص",
     //
     "error" => "خطا",
     "cannot_delete_items_delete_order" => "لا يمكنك الغاء جميع البنود , الغي امر التوريد كامل ",
@@ -801,7 +801,7 @@ return [
     "delegated" => "نائب عنه",
     "cancel" => "الغاء",
     "purchase_unchallenged" => "طلبات لم يتم تحديدها",
-    "purchase_type" => "نوع الطلب",
+    "purchase_type" => " الادارة المختصه",
     "not_determined" => "لم يتم التحديد",
     "purchase_order_status" => "نوع امر التوريد",
     "user" => "مستخدم"

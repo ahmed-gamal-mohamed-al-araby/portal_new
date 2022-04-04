@@ -483,16 +483,11 @@ $currentLanguage = app()->getLocale();
                                                 <div class="col-md-6">
                                                     <div class="input-group mb-3">
                                                         <input type="file" name="file[]"
-                                                            class="custom-file-input file-upload w-auto ml-auto" id="">
+                                                            class="form-control file-upload w-auto ml-auto" id="">
                                                         <div class="text-danger d-none required-validate-error mb-3">
                                                             @lang('site.data-required')
                                                         </div>
-                                                        <label class="custom-file-label text-overflow-dots rounded-0 m-0"
-                                                            style=" text-overflow: ellipsis; overflow: hidden; color: #999"
-                                                            for="logo_image_id">
-                                                            @lang('site.add_file')
 
-                                                        </label>
                                                         <div class="text-danger d-none required-validate-error mb-3">
                                                             @lang('site.data-required')
                                                         </div>
@@ -694,14 +689,9 @@ $currentLanguage = app()->getLocale();
                                                 <div class="col-md-6">
                                                     <div class="input-group mb-3">
                                                         <input type="file" name="file[]"
-                                                            class="custom-file-input file-upload w-auto ml-auto" value="null" id="">
+                                                            class="form-control file-upload w-auto ml-auto" value="null" id="">
 
-                                                        <label class="custom-file-label text-overflow-dots rounded-0 m-0"
-                                                            style=" text-overflow: ellipsis; overflow: hidden; color: #999"
-                                                            for="logo_image_id">
-                                                            @lang('site.add_file')
 
-                                                        </label>
                                                         <div class="text-danger d-none required-validate-error mb-3">
                                                             @lang('site.data-required')
                                                         </div>
@@ -754,17 +744,11 @@ $currentLanguage = app()->getLocale();
                             </div>
                             <div class="col-md-6">
                                 <div class="input-group mb-3">
-                                    <label for="file-upload" class="custom-file-upload">
-                                        <i class="fa fa-cloud-upload"></i> Upload Image
-                                      </label>
+
                                     <input type="file" name="file_purchase_request[]" multiple
-                                        class="custom-file-input file-upload  w-auto ml-auto" value="null" id="">
+                                        class="form-control  w-auto ml-auto" value="null" id="">
 
-                                    <label class="custom-file-label text-overflow-dots rounded-0 m-0"
-                                        style=" text-overflow: ellipsis; overflow: hidden; color: #999" for="logo_image_id">
-                                        @lang('site.add_file')
 
-                                    </label>
                                     <div class="text-danger d-none required-validate-error mb-3">
                                         @lang('site.data-required')
                                     </div>
@@ -1370,14 +1354,9 @@ $currentLanguage = app()->getLocale();
                 <div class="col-md-4 mt-1">
                     <div class="input-group mb-3">
                         <input type="file" name="file[]"
-                            class="custom-file-input file-upload w-auto ml-auto" value="null" id="">
+                            class="form-control file-upload w-auto ml-auto" value="null" id="">
 
-                        <label class="custom-file-label text-overflow-dots rounded-0 m-0"
-                            style=" text-overflow: ellipsis; overflow: hidden; color: #999"
-                            for="logo_image_id">
-                            @lang('site.add_file')
 
-                        </label>
                         <div class="text-danger d-none required-validate-error mb-3">
                             @lang('site.data-required')
                         </div>
@@ -1615,13 +1594,9 @@ $currentLanguage = app()->getLocale();
                     {{-- Logo --}}
                     <div class="col-md-6">
                         <div class="input-group mb-3">
-                            <input type="file" name="file[]" class="custom-file-input file-upload w-auto ml-auto" value="null" id="">
+                            <input type="file" name="file[]" class=" form-control file-upload w-auto ml-auto"  id="">
 
-                            <label class="custom-file-label text-overflow-dots rounded-0 m-0"
-                                style=" text-overflow: ellipsis; overflow: hidden; color: #999" for="logo_image_id">
-                                @lang('site.add_file')
 
-                            </label>
                             <div class="text-danger d-none required-validate-error mb-3">
                                 @lang('site.data-required')
                             </div>
