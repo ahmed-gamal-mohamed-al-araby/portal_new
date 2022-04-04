@@ -23,6 +23,10 @@ class ApprovalCycleApprovalStepSeeder extends Seeder
         $CEOSectorHeadStepID = ApprovalStep::where('code', 'CEO_H')->first()->id;
         $TechnicalOfficeCivilDepartmentManagerStepID = ApprovalStep::where('code', 'TEC_OFF_Civil')->first()->id;
         $TechnicalOfficeMEPDepartmentManagerStepID = ApprovalStep::where('code', 'TEC_OFF_MEP')->first()->id;
+        $HEAD_ACC_AUDDepartmentManagerStepID = ApprovalStep::where('code', 'HEAD_ACC_AUD')->first()->id;
+        $DIR_MDepartmentManagerStepID = ApprovalStep::where('code', 'DIR_M')->first()->id;
+
+
 
         $DepartmentManagerStepID = ApprovalStep::where('code', 'DEP_M')->first()->id;
         $Pln_HStepID = ApprovalStep::where('code', 'Pln_H')->first()->id;
@@ -30,6 +34,7 @@ class ApprovalCycleApprovalStepSeeder extends Seeder
         $PRConstructionITID = ApprovalCycle::where('code', 'IT-01')->first()->id;
         $PRConstructionCivilID = ApprovalCycle::where('code', 'C_Civil')->first()->id;
         $PRConstructionMEPID = ApprovalCycle::where('code', 'C_MEP')->first()->id;
+        $ReqStationary = ApprovalCycle::where('code', 'stationary')->first()->id;
 
         $PRConstructionPO = ApprovalCycle::where('code', 'PO')->first()->id;
         $PRConstructionfactory = ApprovalCycle::where('code', 'factory')->first()->id;
@@ -49,6 +54,32 @@ class ApprovalCycleApprovalStepSeeder extends Seeder
 
 
         $creator = ApprovalStep::where('code', 'CREATOR')->first()->id;
+
+
+        // statinary
+
+        // Step1 (Project Manager)
+        $ReqStationaryProjectManager = ApprovalCycleApprovalStep::create([
+            'approval_cycle_id' => $ReqStationary,
+            'approval_step_id' => $DIR_MDepartmentManagerStepID,
+            'level' => '1',
+            'previous_id' => null
+            // 'next_id' => '',
+        ]);
+
+        $PRConstructionHEAD_ACC_AUD = ApprovalCycleApprovalStep::create([
+            'approval_cycle_id' => $ReqStationary,
+            'approval_step_id' => $HEAD_ACC_AUDDepartmentManagerStepID,
+            'level' => '1',
+            'previous_id' => $ReqStationaryProjectManager->id
+            // 'next_id' => '',
+        ]);
+
+        $ReqStationaryProjectManager->update([
+            'next_id' => $PRConstructionHEAD_ACC_AUD->id
+        ]);
+
+
 
          // cheque_request PRConstructionChequeRequest
 

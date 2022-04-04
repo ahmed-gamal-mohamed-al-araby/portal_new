@@ -92,22 +92,22 @@ $name = 'name_' . $currentLanguage;
                         @if (auth()->user()->name_en == "Michel Gerges Michael Tadros")
 
                             <div class="row purchase_type_top approve_only">
-                                   <div class="col">
-                                        <label for="">@lang("site.purchase_out")</label>
-                                        <input type="radio" name="purchase_type" class="form-control purchase_type"  value="purchase_out">
-                                   </div>
-                                    <div class="col">
-                                          <label for="">@lang("site.purchase_in")</label>
-                                          <input type="radio"  checked name="purchase_type" class="form-control purchase_type" value="purchase_in">
-                                    </div>
-                                    <div class="col">
-                                          <label for="">@lang("site.both")</label>
-                                          <input type="radio"  name="purchase_type" class="form-control purchase_type" value="both">
-                                    </div>
-                                </div>
+                               <div class="col">
+                                    <label for="">@lang("site.purchase_out")</label>
+                                    <input type="radio" name="purchase_type" class="form-control purchase_type"  value="purchase_out">
+                               </div>
+                                <div class="col">
+                                      <label for="">@lang("site.purchase_in")</label>
+                                      <input type="radio"  checked name="purchase_type" class="form-control purchase_type" value="purchase_in">
+                                </div>
+                                <div class="col">
+                                      <label for="">@lang("site.both")</label>
+                                      <input type="radio"  name="purchase_type" class="form-control purchase_type" value="both">
+                                </div>
+                            </div>
 
 
-                            <div class=" direct approve_only">
+                            <div class=" direct  approve_only">
                                <div class="form-group">
                                     <label for="">@lang("site.direct_consent")</label>
                                     <input type="radio" name="skip_stage"   class="form-control skip_stage"  value="skip">
@@ -121,7 +121,7 @@ $name = 'name_' . $currentLanguage;
 
                             @endif
                         @if (auth()->user()->hasRole("super_admin"))
-                        <div class="test">
+                        <div class="test ">
                             <div class="row purchase_type_top approve_only">
                                            <div class="col">
                                                 <label for="">@lang("site.purchase_out")</label>
@@ -258,10 +258,6 @@ $name = 'name_' . $currentLanguage;
                 const user = button.data('user');
                 const pur = button.data('pur');
                 // Change form action attribute
-                if(pur == "purchase_orders") {
-                    $('.purchase_type').val("");
-                    $(".purchase_type_top").hide();
-                }
 
                 if(user == "michel.gerges") {
                     $(".test").show();
@@ -288,6 +284,10 @@ $name = 'name_' . $currentLanguage;
 
                 }
 
+                if(pur == "purchase_orders") {
+                    $('.purchase_type').val("");
+                    $(".purchase_type_top").css("display",'none');
+                }
 
                 console.log(pur);
                 $('#confirm_form').attr('action', "approvals/action/"+confirmModalType);

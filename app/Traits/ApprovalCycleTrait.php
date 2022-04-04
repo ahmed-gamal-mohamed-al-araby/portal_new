@@ -63,7 +63,7 @@ trait ApprovalCycleTrait
             ->where('approval_timelines.user_id', auth()->user()->id)
             // ->orWhere("approval_timelines.user_id",auth()->user()->manager->id)
             ->where('approval_timelines.approval_status', 'P')
-            ->select('approval_timelines.id', 'approval_cycle_approval_steps.level', 'approval_timelines.business_action', "approval_timelines.record_id" ,'users.username', 'approval_timelines.table_name', 'approval_timelines.approval_status', 'approval_steps.name_ar', 'approval_steps.name_en')
+            ->select('approval_timelines.id', 'approval_cycle_approval_steps.level', 'approval_timelines.business_action', "approval_timelines.action_id" , 'approval_timelines.user_id' ,"approval_timelines.record_id" ,'users.username', 'approval_timelines.table_name', 'approval_timelines.approval_status', 'approval_steps.name_ar', 'approval_steps.name_en')
             ->orderBy('approval_timelines.updated_at')->paginate($length);
     }
 
