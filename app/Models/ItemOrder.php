@@ -19,6 +19,10 @@ class ItemOrder extends Model
     // {
     //     return $this->belongsTo("App\Models\PurchaseOrder","purchase_order_id");
     // }
+    public function user()
+    {
+        return $this->belongsTo("App\Models\User" , "action_comment_id");
+    }
 
     public function po()
     {

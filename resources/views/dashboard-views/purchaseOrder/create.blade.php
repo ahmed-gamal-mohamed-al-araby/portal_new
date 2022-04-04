@@ -120,21 +120,25 @@ $currentLanguage = app()->getLocale();
                                                     <select name="purchase_request_id[]" multiple class="custom-select purchase_request_number" id="">
                                                         <option></option>
                                                         @foreach ($purchaseRequest as $purchaseReq)
-                                                        @if (auth()->user()->department->name_en == "Internal Purchasing")
+                                                        @if (auth()->user()->department)
+                                                            @if (auth()->user()->department->name_en == "Internal Purchasing")
                                                             @if ($purchaseReq->purchase_type == "purchase_in"  ||  $purchaseReq->purchase_type == "both")
                                                                 <option value="{{ $purchaseReq->id }}" data-toggle="tooltip" data-placement="top" title="Supplier Name" @if (old('supplier_id')==$supplier->id) {{ 'selected' }} @endif>
                                                                     {{ $purchaseReq->request_number }}
                                                                 </option>
                                                             @endif
-                                                        @endif
-
-                                                        @if (auth()->user()->department->name_en == "External Purchasing")
+                                                            @endif
+                                                            @if (auth()->user()->department->name_en == "External Purchasing")
                                                             @if ($purchaseReq->purchase_type == "purchase_out"  ||  $purchaseReq->purchase_type == "both")
                                                                 <option value="{{ $purchaseReq->id }}" data-toggle="tooltip" data-placement="top" title="Supplier Name" @if (old('supplier_id')==$supplier->id) {{ 'selected' }} @endif>
                                                                     {{ $purchaseReq->request_number }}
                                                                 </option>
                                                             @endif
                                                         @endif
+                                                        @endif
+
+
+
 
 
                                                         @endforeach
@@ -346,11 +350,8 @@ $currentLanguage = app()->getLocale();
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-12 mb-3">
-                                                <button type="button" class="calculate btn btn-info btn-sm">
-                                                    @lang("site.Calculate")
-                                                </button>
-                                            </div>
+                                <div class="col-md-8"></div>
+
 
                                             <div class="col-md-6">
                                                 <div class="form-group">
@@ -435,9 +436,13 @@ $currentLanguage = app()->getLocale();
 
 
 
-                        {{-- Purchase order action --}}
+                        <button type="button" class="calculate btn btn-info">
+                            @lang("site.Calculate")
+                        </button>
+                        <button class="btn btn-primary m-1" name="save" value="1" type="submit" data-toggle="tooltip" data-placement="top" title="Save" id="save">@lang("site.save")   </button>
+
                         <div class="row">
-                            <button class="btn btn-primary m-1" name="save" value="1" type="submit" data-toggle="tooltip" data-placement="top" title="Save" id="save"><i class="far fa-save"></i></button>
+
                             <!-- <button class="btn btn-success m-1" name="saveandsend" type="submit" data-toggle="tooltip"
                                     data-placement="top" title="Save & Send" value="1" id="save_and_send"><i
                                         class="fas fa-paper-plane"></i></button> -->

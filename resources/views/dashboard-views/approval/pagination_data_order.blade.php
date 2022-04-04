@@ -15,11 +15,17 @@ $currentIndex=1;
         <th> @lang('site.approval_create')</th>
         <th> @lang('site.department')</th>
         <th>@lang('site.project')</th>
+
          @if ($accept==1)
         <th>@lang('site.order_status')</th>
-        @endif
-        <th>@lang('site.purchase_order_status')</th>
 
+        @endif
+
+        <th>@lang('site.purchase_order_status')</th>
+        @if ($accept == 0)
+        <th>@lang("site.stepName")</th>
+        <th> @lang('site.status')</th>
+        @endif
         <th> @lang('site.actions')</th>
     </tr>
 </thead>
@@ -151,6 +157,41 @@ $currentIndex=1;
                    @lang("site.both")
                @endif
             </td>
+            @php
+
+            $approvalTimelineNew = App\Models\ApprovalTimeline::where("record_id",$approvalTimeline->record_id)->latest("id")->first()->approval_status;
+                   if ($approvalTimelineNew == "P") {
+                        $name = __('site.approval_status_pending');
+                   } else if($approvalTimelineNew == "RV") {
+                      $name = __('site.approval_status_reverted');
+                    } else if($approvalTimelineNew == "RJ"){
+                      $name = __('site.approval_status_rejected');
+                    } else {
+                      $name = __('site.approval_status_approved');
+                    }
+            if ($accept == 0) {
+                $approvalTimelin = App\Models\ApprovalTimeline::where("record_id",$approvalTimeline->record_id)
+                   ->latest("id")->first();
+                        if($approvalTimelin->action_id != null)
+                            $user = App\Models\User::where("id",$approvalTimelin->action_id)->first();
+                        else
+                            $user = App\Models\User::where("id",$approvalTimelin->user_id)->first();
+
+            } else {
+                $approvalTimelin = App\Models\ApprovalTimeline::where("record_id",$approvalTimeline->record_id)->where("table_name", "cheque_requests")->groupby("record_id")->join('approval_cycle_approval_steps', 'approval_timelines.approval_cycle_approval_step_id', 'approval_cycle_approval_steps.id')
+                    ->select("approval_timelines.id", "approval_timelines.action_id" , "approval_timelines.table_name", "approval_timelines.record_id", "approval_timelines.approval_cycle_approval_step_id", "approval_timelines.approval_status", "approval_timelines.user_id", "approval_timelines.created_at")
+                ->where('approval_cycle_approval_steps.next_id', null)->where('approval_status', 'A')->first();
+                if($approvalTimelin->action_id != null)
+                    $user = App\Models\User::where("id",$approvalTimelin->action_id)->first();
+                 else
+                    $user = App\Models\User::where("id",$approvalTimelin->user_id)->first();
+            }
+
+        @endphp
+        <td>            {{$user['name_'.$currentLanguage]}}
+        </td>
+        <td>            {{$name}}
+        </td>
             <td>
                 <div class="service-option">
 

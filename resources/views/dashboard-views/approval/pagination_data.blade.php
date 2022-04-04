@@ -75,19 +75,19 @@ $currentIndex=1;
                         @if ($accept == 0)
                                 @php
 
-                                $approvalTimelineNew = App\Models\ApprovalTimeline::where("record_id",$approvalTimeline->record_id)->pluck("approval_status")->toArray();
-                   if (in_array("P",$approvalTimelineNew)) {
+                                $approvalTimelineNew = App\Models\ApprovalTimeline::where("record_id",$approvalTimeline->record_id)->latest("id")->first()->approval_status;
+                   if ($approvalTimelineNew == "P") {
                         $name = __('site.approval_status_pending');
-                   } else if(in_array("RV",$approvalTimelineNew)) {
+                   } else if($approvalTimelineNew == "RV") {
                       $name = __('site.approval_status_reverted');
-                    } else if(in_array("RJ",$approvalTimelineNew)) {
+                    } else if($approvalTimelineNew == "RJ"){
                       $name = __('site.approval_status_rejected');
                     } else {
                       $name = __('site.approval_status_approved');
                     }
                                      if ($accept == 0) {
                                         $approvalTimelin = App\Models\ApprovalTimeline::where("record_id",$approvalTimeline->record_id)
-                                           ->latest()->first();
+                                           ->latest("id")->first();
                                                 if($approvalTimelin->action_id != null)
                                                     $user = App\Models\User::where("id",$approvalTimelin->action_id)->first();
                                                 else
@@ -157,7 +157,7 @@ $currentIndex=1;
                         @endif
                         <td>
                         @if ($approvalTimeline->purchaseRequest->purchase_type == null)
-                        @lang("site.not_determined")
+                            @lang("site.not_determined")
                         @else
                             @lang("site.".$approvalTimeline->purchaseRequest->purchase_type)
                         @endif

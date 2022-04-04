@@ -337,6 +337,7 @@ class ApprovalCycleController extends Controller
                             "comment" => $item->comment,
                             "approved" => 1,
                             "comment_refuse" => $comment,
+                            "action_comment_id" => auth()->user()->id
                         ]);
                         ItemRequest::where("id", $request->ids[$index])->delete();
                     }
@@ -363,6 +364,7 @@ class ApprovalCycleController extends Controller
                                 "net_total" => $order->net_total,
                                 "supplier_id" => $order->supplier_id,
                                 "approved" => $order->approved,
+                                "currency" => $order->currency,
                                 "sent" => 0,
                             ]);
                             return  $purchse;
@@ -390,6 +392,8 @@ class ApprovalCycleController extends Controller
                             "unit_new" => $item->unit_new,
                             "comment_change_reason" => $item->comment_change_reason,
                             "specification" => $item->specification,
+                            "action_comment_id" => auth()->user()->id
+
                         ]);
                         ItemOrder::where("id", $request->ids[$index])->delete();
                     }
@@ -486,6 +490,7 @@ class ApprovalCycleController extends Controller
     public function showOrder($id, $value , $message)
 
     {
+
         $factory = 0;
         $approvalTimeline = ApprovalTimeline::find($id);
 
@@ -534,7 +539,7 @@ class ApprovalCycleController extends Controller
         ->join('approval_steps', 'approval_steps.id', '=', 'approval_cycle_approval_steps.approval_step_id')
         ->leftJoin('approval_timeline_comments', 'approval_timeline_comments.approval_timeline_id', '=', 'approval_timelines.id')
         ->select('approval_steps.name_ar as AS_name_ar', 'approval_steps.name_en  as AS_name_en',  'users.name_ar as U_name_ar', 'users.name_en as U_name_en', 'approval_timelines.approval_status',
-        'approval_timeline_comments.comment as comment', "approval_timelines.action_id" , 'approval_timelines.created_at')
+        'approval_timeline_comments.comment as comment', "approval_timelines.action_id" , "approval_timelines.user_id" , 'approval_timelines.created_at')
         ->selectRaw("MAX(approval_timelines.created_at) AS created_at")
         ->groupBy("approval_timelines.user_id")
             ->orderBy("approval_timelines.created_at")
@@ -564,7 +569,7 @@ class ApprovalCycleController extends Controller
         $projects = array_unique($projects);
 
 
-        $ApprovalTimeline = $this->getCurrentUserPendingApprovals();
+         $ApprovalTimeline = $this->getCurrentUserPendingApprovals();
         // return $ApprovalTimeline;
         // return env('APP_URL','');
 
@@ -635,7 +640,6 @@ class ApprovalCycleController extends Controller
     {
           $id  = $request->approval_id;
         // return $request->image_approve;
-
         $approvalTimeline = ApprovalTimeline::where('id', $id)->firstOrFail();
         $model = $this->getModelFromClassName($approvalTimeline->table_name);
         $creatorUser = $model::findOrFail($approvalTimeline->record_id)->requester;
@@ -643,18 +647,30 @@ class ApprovalCycleController extends Controller
         if(auth()->user()->sector->name_en == "Business Development") {
             $approvalTimeline->update([
                 'approval_status' => 'A',
-                "action_id" => \Auth::user()->id
+                "action_id" => \Auth::user()->id,
+                "business_action" => 2
+
+            ]);
+            ApprovalTimeline::where("business_action",3)->where("record_id",$approvalTimeline->record_id)->update([
+                "business_action" => 0
             ]);
         } else {
-            DB::beginTransaction();
+
         try {
+            DB::beginTransaction();
             // $purchase->update([
             //     "approved" => 1
             // ]);
+
             $approvalTimeline->update([
                 'approval_status' => 'A',
                 "action_id" => \Auth::user()->id
             ]);
+
+             ApprovalTimelineComment::create([
+                    'comment_approve' => $request->comment,
+                    'approval_timeline_id' => $id,
+                ]);
 
             $currentApprovalCycleApprovalStep = $approvalTimeline->approvalCycleApprovalStep;
             $nextApprovalCycleApprovalStep = $currentApprovalCycleApprovalStep->next;
@@ -697,10 +713,9 @@ class ApprovalCycleController extends Controller
                     ]);
                 }
 
-                ApprovalTimelineComment::create([
-                    'comment_approve' => $request->comment,
-                    'approval_timeline_id' => $id,
-                ]);
+
+
+                // return $request->comment;
 
                 if($approvalTimeline->table_name == "purchase_requests") {
                     PurchaseRequest::where("id",$approvalTimeline->record_id)->update([
@@ -716,7 +731,7 @@ class ApprovalCycleController extends Controller
                     ]);
                 }
 
-                DB::commit();
+
                 if ($request->has('image_approve')) {
                     foreach ($request->image_approve as $file) {
                         $file_approve = $this->uploadImage('approve_request' ,$file);
@@ -727,6 +742,7 @@ class ApprovalCycleController extends Controller
                         ]);
                     }
                 }
+                DB::commit();
                 $this->getSuccess();
             } else {
                 $this->getSuccessToastrMessage('DONE');
@@ -800,10 +816,12 @@ class ApprovalCycleController extends Controller
                 // $purchase->update([
                 //     "approved" => 1
                 // ]);
+
                 $approvalTimeline->update([
                     'approval_status' => 'A',
                     "action_id" => \Auth::user()->id,
                 ]);
+
 
                 $currentApprovalCycleApprovalStep = $approvalTimeline->approvalCycleApprovalStep;
                 $nextApprovalCycleApprovalStep = $currentApprovalCycleApprovalStep->next;
@@ -944,11 +962,15 @@ class ApprovalCycleController extends Controller
             $model = $this->getModelFromClassName($approvalTimeline->table_name);
             $creatorUser = $model::findOrFail($approvalTimeline->record_id)->requester;
             try {
-
-                $approvalTimeline->update([
-                    'approval_status' => 'A',
-                    "action_id" => \Auth::user()->id,
-                ]);
+                if($approvalTimeline->table_name == "purchase_requests") {
+                    $purchaseRequest = PurchaseRequest::find($approvalTimeline->record_id);
+                    if($purchaseRequest->group->code != "IT-01") {
+                        $approvalTimeline->update([
+                            'approval_status' => 'A',
+                            "action_id" => \Auth::user()->id,
+                        ]);
+                    }
+                }
 
                 $currentApprovalCycleApprovalStep = $approvalTimeline->approvalCycleApprovalStep;
 
@@ -1079,14 +1101,14 @@ class ApprovalCycleController extends Controller
 
         if (Auth::user()->can('timeline-purchase-request-super')) {
             $purchaseRequestId = PurchaseRequest::pluck("id");
+
         }
         elseif(Auth::user()->can('internal_purchases')){
-            $purchaseRequestId = PurchaseRequest::where("purchase_type" , "purchase_in")->orWhere("purchase_type" , "both")->pluck("id");
+            $purchaseRequestId = PurchaseRequest::where("purchase_type" , "purchase_in")->orWhere("requester_id",auth()->user()->id)->orWhere("purchase_type" , "both")->pluck("id");
 
         }
         elseif(Auth::user()->can('external_purchases')){
-            $purchaseRequestId = PurchaseRequest::where("purchase_type" , "purchase_out")->orWhere("purchase_type" , "both")->pluck("id");
-
+            $purchaseRequestId = PurchaseRequest::where("purchase_type" , "purchase_out")->orWhere("requester_id",auth()->user()->id)->orWhere("purchase_type" , "both")->pluck("id");
         }
 
         else {
@@ -1144,18 +1166,16 @@ class ApprovalCycleController extends Controller
     public function showAllApprovalOrdersTimeline()
     {
         $authSectorId = auth()->user()->sector->id;
-
-        // if (Auth::user()->can('timeline-purchase-order-super')) {
-        //     $purchaseRequestId = PurchaseRequest::pluck("id");
-        // }
-        // else {
-        //     $purchaseRequestId = PurchaseRequest::where("sector_id" , auth()->user()->sector->id)->pluck("id");
-        // }
         $purchaseRequestId = PurchaseRequest::pluck("id");
         $itemRequests = ItemRequest::whereIn("purchase_request_id",$purchaseRequestId)->pluck("id");
-        $purchaseOrdersId = ItemOrder::whereIn("item_request_id",$itemRequests)->pluck("purchase_order_id");
-        $userSector = User::where("sector_id",$authSectorId)->pluck("id");
-        $purchseOrderId = PurchaseOrder::whereIn("requester_id",$userSector)->pluck("id");
+        if (Auth::user()->can('timeline-purchase-order-super') || auth()->user()->hasRole("super_admin")) {
+            $purchseOrderId = ItemOrder::whereIn("item_request_id",$itemRequests)->pluck("purchase_order_id");
+        }
+        else {
+            $purchaseOrdersId = ItemOrder::whereIn("item_request_id",$itemRequests)->pluck("purchase_order_id");
+            $userSector = User::where("sector_id",$authSectorId)->pluck("id");
+            $purchseOrderId = PurchaseOrder::whereIn("requester_id",$userSector)->pluck("id");
+        }
 
         $approvalTimelines = ApprovalTimeline::whereIn("record_id", $purchseOrderId)->with("itemOrders", "purchaseOrder")->where("table_name", "purchase_orders")->groupby("record_id")->distinct()->get();
         $data = [];
@@ -1185,17 +1205,17 @@ class ApprovalCycleController extends Controller
             $purchaseRequestsId = PurchaseRequest::pluck("id");
         }
         elseif(Auth::user()->can('internal_purchases')){
-            $purchaseRequestsId = PurchaseRequest::where("purchase_type" , "purchase_in")->pluck("id");
+            $purchaseRequestsId = PurchaseRequest::where("purchase_type" , "purchase_in")->orWhere("requester_id",auth()->user()->id)->pluck("id");
 
         }
         elseif(Auth::user()->can('external_purchases')){
-            $purchaseRequestsId = PurchaseRequest::where("purchase_type" , "purchase_out")->pluck("id");
+            $purchaseRequestsId = PurchaseRequest::where("purchase_type" , "purchase_out")->orWhere("requester_id",auth()->user()->id)->pluck("id");
 
         }
 
 
         else {
-            $purchaseRequestsId = PurchaseRequest::where("sector_id" , auth()->user()->sector->id)->pluck("id");
+            $purchaseRequestsId = PurchaseRequest::where("sector_id" , auth()->user()->sector->id)->orWhere("requester_id",auth()->user()->id)->pluck("id");
         }
 
         $approvalTimelines = ApprovalTimeline::whereIn("record_id",$purchaseRequestsId)->where("table_name", "purchase_requests")->groupby("record_id")->join('approval_cycle_approval_steps', 'approval_timelines.approval_cycle_approval_step_id', 'approval_cycle_approval_steps.id')

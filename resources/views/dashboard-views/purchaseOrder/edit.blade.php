@@ -116,6 +116,11 @@ $currentLanguage = app()->getLocale();
                                                             class="custom-select purchase_request_number" id="">
                                                             <option></option>
                                                             @foreach ($purchaseRequests as $purchaseRequest)
+                                                            @if (auth()->user()->department)
+                                                            @if (auth()->user()->department->name_en == "Internal Purchasing")
+
+                                                                @if ($purchaseRequest->purchase_type == "purchase_in"  ||  $purchaseRequest->purchase_type == "both")
+
                                                                 <option value="{{ $purchaseRequest->id }}" @foreach ($purchaseReqId as $purID)
                                                                     @if ($purID == $purchaseRequest->id)
                                                                         selected
@@ -125,6 +130,25 @@ $currentLanguage = app()->getLocale();
                                                             @if (old('supplier_id') == $supplier->id) {{ 'selected' }} @endif>
                                                             {{ $purchaseRequest->request_number }}
                                                             </option>
+                                                                    @endif
+                                                                    @endif
+                                                                    @if (auth()->user()->department->name_en == "External Purchasing")
+
+                                                                @if ($purchaseRequest->purchase_type == "purchase_out"  ||  $purchaseRequest->purchase_type == "both")
+
+                                                                <option value="{{ $purchaseRequest->id }}" @foreach ($purchaseReqId as $purID)
+                                                                    @if ($purID == $purchaseRequest->id)
+                                                                        selected
+                                                                    @endif
+                                                            @endforeach
+                                                            data-toggle="tooltip" data-placement="top" title="Supplier Name"
+                                                            @if (old('supplier_id') == $supplier->id) {{ 'selected' }} @endif>
+                                                            {{ $purchaseRequest->request_number }}
+                                                            </option>
+                                                                    @endif
+                                                                    @endif
+                                                                @endif
+
                                                             @endforeach
                                                         </select>
 
@@ -238,7 +262,12 @@ $currentLanguage = app()->getLocale();
                                                             <th> @lang('site.quantity')</th>
                                                             <th> @lang('site.price')</th>
                                                             <th> @lang('site.total')</th>
-                                                            {{-- <th> @lang('site.comment')</th> --}}
+                                                            @foreach ($items_self as $index => $item_self)
+                                                                @if ($item_self->comment_refuse)
+                                                                    <th class="notes_table"> @lang('site.notes')</th>
+                                                                @endif
+                                                                @break;
+                                                            @endforeach
                                                             <th> @lang('site.actions')</th>
                                                         </tr>
                                                     </thead>
@@ -290,9 +319,34 @@ $currentLanguage = app()->getLocale();
                                                                         value="{{ $item_self->total }}"
                                                                         class="form-control total" id="">
                                                                 </td>
-                                                                {{-- <td width="10%">
-                                                                    <textarea name="comment[]"  readonly class="form-control comment" id="" rows="2">{{$item_self->comment_change_reason}}</textarea>
-                                                                </td> --}}
+                                                            @if ($item_self->comment_refuse)
+
+                                                                <td width="10%">
+                                                                    {{-- <textarea name="comment[]"  readonly style="border:2px solid #F00;" class="form-control comment" id="" rows="2">{{$item_self->comment_refuse}}</textarea> --}}
+                                                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModal{{$item_self->id}}">
+                                                                        @lang("site.Show")
+                                                                      </button>
+
+                                                                      <div class="modal fade" id="exampleModal{{$item_self->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel{{$item_self->id}}" aria-hidden="true">
+                                                                        <div class="modal-dialog" role="document">
+                                                                          <div class="modal-content">
+                                                                            <div class="modal-header">
+                                                                              <h5 class="modal-title" id="exampleModalLabel">@lang("site.notes")</h5>
+                                                                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                <span aria-hidden="true">&times;</span>
+                                                                              </button>
+                                                                            </div>
+                                                                            <div class="modal-body">
+                                                                              ملاحظات من :   {{$item_self->user['name_'.$currentLanguage]}}   <br>      <p class="text-danger"> {{$item_self->comment_refuse}}</p>
+                                                                            </div>
+                                                                            <div class="modal-footer">
+                                                                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                            </div>
+                                                                          </div>
+                                                                        </div>
+                                                                      </div>
+                                                                </td>
+                                                                @endif
                                                                 <td>
                                                                     <input type="hidden" name="not_checked[]"
                                                                         value="{{ $index }}" class="accept"
@@ -394,11 +448,8 @@ $currentLanguage = app()->getLocale();
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-12 mb-3">
-                                                    <button type="button" class="calculate btn btn-info btn-sm">
-                                                        @lang("site.Calculate")
-                                                    </button>
-                                                </div>
+                                                <div class="col-md-8"></div>
+
 
                                                 <div class="col-md-6">
                                                     <div class="form-group">
@@ -462,18 +513,45 @@ $currentLanguage = app()->getLocale();
                                                                 </textarea>
                                                 </div>
                                             </div>
+                                            @if ($purchaseOrder->ApprovalTimeline->count() > 0)
+                                                @php
+                                                    $approId = $purchaseOrder->ApprovalTimeline->last()->id;
+                                                    if(App\Models\ApprovalTimeline::find($approId)->action_id) {
+                                                        $userAction = App\Models\ApprovalTimeline::find($approId)->action_id;
+
+                                                    } else {
+                                                        $userAction = App\Models\ApprovalTimeline::find($approId)->user_id;
+
+                                                    }
+                                                    $user = App\Models\User::find($userAction);
+                                                    $commentAllPr = App\Models\ApprovalTimelineComment::where("approval_timeline_id",$approId)->first()->comment;
+                                                @endphp
+                                            @endif
+                                            @if ($purchaseOrder->ApprovalTimeline->count() > 0)
+                                                <div class="col-md-6  mb-1 no-gutters">
+                                                    <div class="col-md-12">
+                                                    <label for="">  ملاحظات من :  {{$user['name_'.$currentLanguage]}}</label>
+                                                    <textarea type="text"
+                                                        placeholder="@lang('site.Add') @lang('site.Comment')" readonly
+                                                        class="form-control" rows="3"
+                                                        cols="10">{{$commentAllPr}}</textarea>
+                                                    </div>
+
+                                                    </div>
+                                            @endif
                                         </div>
 
 
                                     </div>
 
-
-
+                                    <button type="button" class="calculate btn btn-info s">
+                                        @lang("site.Calculate")
+                                    </button>
+                                    <button class="btn btn-primary m-1" name="save" value="1" type="submit"
+                                    data-toggle="tooltip" data-placement="top" title="Save" id="save">@lang("site.save")</button>
                                     {{-- Purchase order action --}}
                                     <div class="row">
-                                        <button class="btn btn-primary m-1" name="save" value="1" type="submit"
-                                            data-toggle="tooltip" data-placement="top" title="Save" id="save"><i
-                                                class="far fa-save"></i></button>
+
                                         <!-- <button class="btn btn-success m-1" name="saveandsend" type="submit" data-toggle="tooltip"
                                         data-placement="top" title="Save & Send" value="1" id="save_and_send"><i
                                             class="fas fa-paper-plane"></i></button> -->
@@ -693,6 +771,7 @@ $currentLanguage = app()->getLocale();
             var projects = [];
             $("#sectors").text("");
             $("#projects").text("");
+            $(".notes_table").hide();
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

@@ -26,5 +26,8 @@ class PurchaseOrder extends Model
     {
         return $this->hasMany(ItemOrder::class);
     }
-    
+    public function ApprovalTimeline()
+    {
+        return $this->hasMany("App\Models\ApprovalTimeline","record_id");
+    }
 }
