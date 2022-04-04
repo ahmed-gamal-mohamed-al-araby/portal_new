@@ -1,0 +1,286 @@
+@php
+$currentLanguage = app()->getLocale();
+$currentIndex = $ApprovalTimelines->firstItem();
+@endphp
+<h2 class=""> @lang("site.purchase_requests") و @lang("site.purchase_orders")</h2>
+<table id="datatableTemplate" class="table table-bordered table-striped text-center sort-table">
+
+    {{-- Table Header --}}
+    <thead>
+        <tr>
+            <th> @lang('site.table_name')</th>
+            <th> @lang('site.number')</th>
+            <th> @lang('site.StepLevel')</th>
+            <th> @lang('site.stepName')</th>
+            <th> @lang('site.approval_status')</th>
+            <th> @lang('site.notes')</th>
+            @if (auth()->user()->sector)
+                        @if (auth()->user()->sector->name_en == "Purchasing")
+            <th> @lang('site.answer')</th>
+            @endif
+            @endif
+            <th> @lang('site.actions')</th>
+        </tr>
+    </thead>
+
+    {{-- Table body --}}
+    <tbody>
+
+        @foreach ($ApprovalTimelines as $key =>$ApprovalTimeline)
+            @php
+                $idBusiness = App\Models\ApprovalTimeline::where( "table_name" ,$ApprovalTimeline->table_name)->where("record_id",$ApprovalTimeline->record_id)->where("user_id",17)->first();
+            @endphp
+         @if ($idBusiness)
+
+             @if ($idBusiness->approval_status != "P" || auth()->user()->sector->name_en == "Business Development")
+
+
+                @if ($ApprovalTimeline->table_name == "purchase_orders" || $ApprovalTimeline->table_name == "purchase_requests")
+                <tr>
+                    <td>@lang('site.' . $ApprovalTimeline->table_name)</td>
+                    @if($ApprovalTimeline->table_name == "purchase_orders")
+                    <td>{{ $order[$key]->purchaseOrder->order_number }}</td>
+                    @elseif($ApprovalTimeline->table_name == "purchase_requests")
+                    <td>{{ $order[$key]->purchaseRequest->request_number }}</td>
+                    @endif
+                    <td>{{ $ApprovalTimeline->level}}</td>
+                    <td>{{ $ApprovalTimeline->username}}</td>
+                    <td>
+                        @if ($ApprovalTimeline->approval_status == 'P')
+                        @lang('site.approval_status_pending')
+                        <i class="fas fa-spinner fa-pulse text-warning"></i>
+                        @elseif($ApprovalTimeline->approval_status ==
+                        'A')@lang('site.approval_status_approved')
+                        <i class="fas fa-check text-success"></i>
+                        @elseif($ApprovalTimeline->approval_status ==
+                        'RV')@lang('site.approval_status_reverted')
+                        <i class="fas fa-undo-alt text-danger"></i>
+                        @elseif($ApprovalTimeline->approval_status ==
+                        'RJ')@lang('site.approval_status_rejected')
+                        <i class="fas fa-times text-danger"></i>
+                        @endif
+                    </td>
+                    <td>
+
+                    @if (DB::table($ApprovalTimeline->table_name)->where("id",$ApprovalTimeline->record_id)->first()->exist_comment == 1)
+                        <a href="{{ route('approvals.timeline_by_id', $ApprovalTimeline->id) }}" class="btn btn-success btn-sm"><i class="fa fa-eye"></i> @lang('site.Show') </a>
+                    @else
+                         @lang("site.no_exist")
+                    @endif
+
+
+
+
+                    </td>
+                    @if (auth()->user()->sector)
+                    @if (auth()->user()->sector->name_en == "Purchasing")
+                    <td>
+                    {{-- @php
+                     $idBusiness = App\Models\ApprovalTimeline::where( "table_name" ,$ApprovalTimeline->table_name)->where("record_id",$ApprovalTimeline->record_id)->where("user_id",17)->first();
+                    @endphp --}}
+
+                    @if ($idBusiness)
+                        <a  data-toggle="modal" data-target="#exampleModal{{$ApprovalTimeline->id}}" class="btn btn-success btn-sm"><i class="fa fa-eye"></i> @lang('site.Show') </a>
+                        @else
+                         @lang("site.no_exist")
+                        @endif
+
+                        </td>
+                        <div class="modal fade" id="exampleModal{{$ApprovalTimeline->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLabel">@lang("site.answer_business")</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <div class="modal-body">
+                                    @if ($idBusiness)
+                                        <div class="row">
+                                            <div class="col">
+                                                <h6>@lang("site.business_development")</h6>
+                                            </div>
+                                            <div class="col">
+                                                <h6>{{$idBusiness->user['name_'.$currentLanguage]}}</h6>
+                                            </div>
+                                           <div class="col">
+                                                @if ($idBusiness->approval_status == 'P')
+                                                @lang('site.approval_status_pending')
+                                                <i class="fas fa-spinner fa-pulse text-warning"></i>
+                                                @elseif($idBusiness->approval_status ==
+                                                'A')@lang('site.approval_status_approved')
+                                                <i class="fas fa-check text-success"></i>
+                                                @elseif($idBusiness->approval_status ==
+                                                'RV')@lang('site.approval_status_reverted')
+                                                <i class="fas fa-undo-alt text-danger"></i>
+                                                @elseif($idBusiness->approval_status ==
+                                                'RJ')@lang('site.approval_status_rejected')
+                                                <i class="fas fa-times text-danger"></i>
+                                                @endif
+                                           </div>
+                                           <div class="col">
+                                                <h6>{{$idBusiness->updated_at}}</h6>
+                                           </div>
+
+                                        </div>
+                                        <div class="comment">
+                                            @php
+                                                $approvalComment = App\Models\ApprovalTimelineComment::where("approval_timeline_id", $idBusiness->id)->first();
+                                            @endphp
+                                            @if ($approvalComment)
+                                                {{ $approvalComment->comment}} -- {{ $approvalComment->comment_approve}}
+                                            @endif
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        @endif
+                        @endif
+                    <td>
+                        <div class="service-option">
+                            @if ($ApprovalTimeline->table_name == "purchase_requests")
+                            <a href="{{ route('approvals.action.showOrder',[ $ApprovalTimeline->id,0,0]) }}" class="btn btn-success" tooltip="@lang('site.Show')"><i class="fas fa-eye"></i></a>
+                            @elseif($ApprovalTimeline->table_name == "purchase_orders")
+                            <a href="{{ route('approvals.action.showOrderRequest',[ $ApprovalTimeline->id,0,0]) }}" class="btn btn-success" tooltip="@lang('site.Show')"><i class="fas fa-eye"></i></a>
+                            @elseif($ApprovalTimeline->table_name == "cheque_requests")
+                            <a href="{{ route('approvals.action.showChequeRequest',[ $ApprovalTimeline->id,0,0]) }}" class="btn btn-success" tooltip="@lang('site.Show')"><i class="fas fa-eye"></i></a>
+                            @endif
+                            @if (auth()->user()->sector)
+                                @if (auth()->user()->sector->name_en == "Purchasing")
+                                    <a href="{{ route('approvals.action.approve.business', $ApprovalTimeline->id) }}" class="btn btn-success" tooltip="@lang('site.send_business')"><i class="fas fa-paper-plane"></i></a>
+                                @endif
+                            @endif
+                            <a data-approval_time="{{ $ApprovalTimeline->id }}" data-type='approval' data-toggle="modal" data-target="#confirm_modal" class="btn btn-success" data-pur="{{ $ApprovalTimeline->table_name }}" data-toggle="modal" tooltip="@lang('site.approve_comment')"><i class="fas fa-comment-dots"></i></a>
+                            <a href="{{ route('approvals.action.approve', $ApprovalTimeline->id) }}" class="btn btn-success" tooltip="@lang('site.Approve')"><i class="fas fa-check"></i></a>
+                            <a data-approval_time="{{ $ApprovalTimeline->id }}" data-type='revert' data-toggle="modal" data-target="#confirm_modal" class="btn btn-warning" data-toggle="modal" tooltip="@lang('site.Revert')"><i class="fas fa-undo-alt"></i></a>
+                            <a data-approval_time="{{ $ApprovalTimeline->id }}" data-type='reject' data-toggle="modal" data-target="#confirm_modal" class="btn btn-danger" data-toggle="modal" tooltip="@lang('site.Reject')"><i class="fa fa-times"></i></a>
+                        </div>
+                    </td>
+
+
+
+                </tr>
+                @endif
+                @endif
+                @endif
+
+        @endforeach
+    </tbody>
+</table>
+
+
+
+{{-- Pagination --}}
+<div class="row m-0 justify-content-between panination_container">
+    <div class="">
+        <div class="dataTables_info" id="datatableTemplate_info" role="status" aria-live="polite">@lang('site.Show')
+            {{ $ApprovalTimelines->currentPage() }} @lang('site.From') {{ $ApprovalTimelines->lastPage() }}
+            {{-- Handle plural or singular for page word --}}
+            @if ($ApprovalTimelines->lastPage() > 1)
+            @lang('site.Pages')
+            @else
+            @lang('site.Page')
+            @endif
+        </div>
+    </div>
+    <div class="">
+        {!! $ApprovalTimelines->links() !!}
+    </div>
+</div>
+
+
+<h2>@lang("site.all_cheque_request")</h2>
+
+<table id="datatableTemplate" class="table table-bordered table-striped text-center sort-table">
+
+    <thead>
+        <tr>
+            <th> @lang('site.Id')</th>
+            <th> @lang('site.cheque_number')</th>
+            <th> @lang('site.company_name')</th>
+            <th> @lang('site.transfer')</th>
+            <th> @lang('site.cheque_value')</th>
+            <th> @lang('site.operation_name')</th>
+            <th> @lang('site.order_number')</th>
+            <th>@lang('site.status')</th>
+            <th> @lang('site.actions')</th>
+        </tr>
+    </thead>
+
+    {{-- Table body --}}
+    <tbody>
+
+        @foreach ($ApprovalTimelines as $key =>$ApprovalTimeline)
+        <tr>
+            @if($ApprovalTimeline->table_name == "cheque_requests")
+                <td>{{++$currentIndex}}</td>
+                <td>{{ $order[$key]->cheque->cheque_number }}</td>
+                <td>{{ $order[$key]->cheque->supplier["name_".$currentLanguage] }}</td>
+                <td>@lang("site.".$order[$key]->cheque->type_ord_okay)</td>
+                <td>{{ $order[$key]->cheque->cheque_value }}</td>
+                <td>{{ $order[$key]->cheque->operation_name }}</td>
+                <td>{{ $order[$key]->cheque->purchaseOrder->order_number }}</td>
+
+                <td>
+                    @if ($ApprovalTimeline->approval_status == 'P')
+                    @lang('site.approval_status_pending')
+                    <i class="fas fa-spinner fa-pulse text-warning"></i>
+                    @elseif($ApprovalTimeline->approval_status ==
+                    'A')@lang('site.approval_status_approved')
+                    <i class="fas fa-check text-success"></i>
+                    @elseif($ApprovalTimeline->approval_status ==
+                    'RV')@lang('site.approval_status_reverted')
+                    <i class="fas fa-undo-alt text-danger"></i>
+                    @elseif($ApprovalTimeline->approval_status ==
+                    'RJ')@lang('site.approval_status_rejected')
+                    <i class="fas fa-times text-danger"></i>
+                    @endif
+                </td>
+                <td>
+                    <div class="service-option">
+                        @if ($ApprovalTimeline->table_name == "purchase_requests")
+                        <a href="{{ route('approvals.action.showOrder',[ $ApprovalTimeline->id,0,0]) }}" class="btn btn-success" tooltip="@lang('site.Show')"><i class="fas fa-eye"></i></a>
+                        @elseif($ApprovalTimeline->table_name == "purchase_orders")
+                        <a href="{{ route('approvals.action.showOrderRequest',[ $ApprovalTimeline->id,0,0]) }}" class="btn btn-success" tooltip="@lang('site.Show')"><i class="fas fa-eye"></i></a>
+                        @elseif($ApprovalTimeline->table_name == "cheque_requests")
+                        <a href="{{ route('approvals.action.showChequeRequest',[ $ApprovalTimeline->id,0,0]) }}" class="btn btn-success" tooltip="@lang('site.Show')"><i class="fas fa-eye"></i></a>
+                        @endif
+
+                        <a data-approval_time="{{ $ApprovalTimeline->id }}" data-type='approve' data-toggle="modal" data-target="#confirm_modal" class="btn btn-success" data-toggle="modal" tooltip="@lang('site.Approve')"><i class="fas fa-paper-plane"></i></a>
+                        {{-- <a href="{{ route('approvals.action.approve', $ApprovalTimeline->id) }}" class="btn btn-success" tooltip="@lang('site.Approve')"><i class="fas fa-paper-plane"></i></a> --}}
+                        <a data-approval_time="{{ $ApprovalTimeline->id }}" data-type='revert' data-toggle="modal" data-target="#confirm_modal" class="btn btn-warning" data-toggle="modal" tooltip="@lang('site.Revert')"><i class="fas fa-undo-alt"></i></a>
+                        <a data-approval_time="{{ $ApprovalTimeline->id }}" data-type='reject' data-toggle="modal" data-target="#confirm_modal" class="btn btn-danger" data-toggle="modal" tooltip="@lang('site.Reject')"><i class="fa fa-times"></i></a>
+                    </div>
+                </td>
+            @endif
+        </tr>
+
+
+        @endforeach
+    </tbody>
+</table>
+
+
+{{-- Pagination --}}
+<div class="row m-0 justify-content-between panination_container">
+    <div class="">
+        <div class="dataTables_info" id="datatableTemplate_info" role="status" aria-live="polite">@lang('site.Show')
+            {{ $ApprovalTimelines->currentPage() }} @lang('site.From') {{ $ApprovalTimelines->lastPage() }}
+            {{-- Handle plural or singular for page word --}}
+            @if ($ApprovalTimelines->lastPage() > 1)
+            @lang('site.Pages')
+            @else
+            @lang('site.Page')
+            @endif
+        </div>
+    </div>
+    <div class="">
+        {!! $ApprovalTimelines->links() !!}
+    </div>
+</div>

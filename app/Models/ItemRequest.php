@@ -15,6 +15,10 @@ class ItemRequest extends Model
     {
         return $this->belongsTo(PurchaseRequest::class);
     }
+    public function user()
+    {
+        return $this->belongsTo("App\Models\User" , "action_comment_id");
+    }
 
     public function familyName()
     {

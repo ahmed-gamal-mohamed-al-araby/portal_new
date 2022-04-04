@@ -840,6 +840,7 @@ $currentLanguage = app()->getLocale();
                         {{-- Comment_refuse --}}
                         <div class="col-md-6 mb-1 no-gutters">
                             <div class="col-md-12">
+                            <label> ملاحظات من :  {{$item->user['name_'.$currentLanguage]}}</label>
                                 <textarea type="text" name="comment_refuse"
                                     placeholder="@lang('site.Add') @lang('site.comment_refuse')"
                                     class="form-control comment_refuse" rows="3" cols="10" title="@lang("
@@ -1103,7 +1104,9 @@ $currentLanguage = app()->getLocale();
                                         {{-- Comment_refuse --}}
                                         <div class="col-md-6 mb-1 no-gutters">
                                             <div class="col-md-12">
-                                                <textarea type="text" name="comment_refuse"
+                                        <label> ملاحظات من :  {{$item->user['name_'.$currentLanguage]}}</label>
+
+                                                <textarea type="text" name="comment_refuse" readonly style="border:2px solid #F00;"
                                                     placeholder="@lang('site.Add') @lang('site.comment_refuse')"
                                                     class="form-control comment_refuse" rows="3" cols="10" title="@lang("
                                                     site.comment_refuse") ....." data-toggle="tooltip" data-placement="top"

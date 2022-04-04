@@ -337,6 +337,7 @@ class ApprovalCycleController extends Controller
                             "comment" => $item->comment,
                             "approved" => 1,
                             "comment_refuse" => $comment,
+                            "action_comment_id" => auth()->user()->id
                         ]);
                         ItemRequest::where("id", $request->ids[$index])->delete();
                     }
@@ -363,6 +364,7 @@ class ApprovalCycleController extends Controller
                                 "net_total" => $order->net_total,
                                 "supplier_id" => $order->supplier_id,
                                 "approved" => $order->approved,
+                                "currency" => $order->currency,
                                 "sent" => 0,
                             ]);
                             return  $purchse;
@@ -390,6 +392,8 @@ class ApprovalCycleController extends Controller
                             "unit_new" => $item->unit_new,
                             "comment_change_reason" => $item->comment_change_reason,
                             "specification" => $item->specification,
+                            "action_comment_id" => auth()->user()->id
+
                         ]);
                         ItemOrder::where("id", $request->ids[$index])->delete();
                     }
@@ -953,14 +957,16 @@ class ApprovalCycleController extends Controller
             $model = $this->getModelFromClassName($approvalTimeline->table_name);
             $creatorUser = $model::findOrFail($approvalTimeline->record_id)->requester;
             try {
-
-                $purchaseRequest = PurchaseRequest::find($approvalTimeline->record_id);
-                if($purchaseRequest->group->code != "IT-01") {
-                    $approvalTimeline->update([
-                        'approval_status' => 'A',
-                        "action_id" => \Auth::user()->id,
-                    ]);
+                if($approvalTimeline->table_name == "purchase_requests") {
+                    $purchaseRequest = PurchaseRequest::find($approvalTimeline->record_id);
+                    if($purchaseRequest->group->code != "IT-01") {
+                        $approvalTimeline->update([
+                            'approval_status' => 'A',
+                            "action_id" => \Auth::user()->id,
+                        ]);
+                    }
                 }
+
                 $currentApprovalCycleApprovalStep = $approvalTimeline->approvalCycleApprovalStep;
 
                 $previousApprovalCycleApprovalStep = $currentApprovalCycleApprovalStep->previous;
