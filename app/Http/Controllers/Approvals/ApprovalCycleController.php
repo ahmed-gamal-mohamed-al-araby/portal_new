@@ -647,7 +647,12 @@ class ApprovalCycleController extends Controller
         if(auth()->user()->sector->name_en == "Business Development") {
             $approvalTimeline->update([
                 'approval_status' => 'A',
-                "action_id" => \Auth::user()->id
+                "action_id" => \Auth::user()->id,
+                "business_action" => 2
+
+            ]);
+            ApprovalTimeline::where("business_action",3)->where("record_id",$approvalTimeline->record_id)->update([
+                "business_action" => 0
             ]);
         } else {
 
