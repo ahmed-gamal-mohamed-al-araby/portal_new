@@ -337,7 +337,10 @@ $currentLanguage = app()->getLocale();
                                                                               </button>
                                                                             </div>
                                                                             <div class="modal-body">
-                                                                              ملاحظات من :   {{$item_self->user['name_'.$currentLanguage]}}   <br>      <p class="text-danger"> {{$item_self->comment_refuse}}</p>
+                                                                            @if ($item_self->user)
+                                                                            ملاحظات من :   {{$item_self->user['name_'.$currentLanguage]}}   <br>      <p class="text-danger"> {{$item_self->comment_refuse}}</p>
+
+                                                                            @endif
                                                                             </div>
                                                                             <div class="modal-footer">
                                                                               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

@@ -319,57 +319,56 @@ $name = 'name_' . $currentLanguage;
                                            @endif
                                        @endif
                                @endif
-                        @endif
-                        @php
-                            $approvelStepID  = App\Models\approvalCycleApprovalStep::find($timeline->approval_cycle_approval_step_id)->approval_step_id;
-                            $managerProject  = App\Models\approvalStep::find($approvelStepID)->code;
-                        @endphp
-                        @if ($managerProject != "PRO_M")
-                        <div class="item d-flex">
+                            @endif
+                                @php
+                                    $approvelStepID  = App\Models\approvalCycleApprovalStep::find($timeline->approval_cycle_approval_step_id)->approval_step_id;
+                                    $managerProject  = App\Models\approvalStep::find($approvelStepID)->code;
+                                @endphp
+                            @if ($managerProject != "PRO_M")
+                            <div class="item d-flex">
 
-                            <h5>
-                                {{ $timeline->{'AS_' . $name} }}
-                            </h5>
+                                <h5>
+                                    {{ $timeline->{'AS_' . $name} }}
+                                </h5>
 
-                            <h5>
-                               @if ($timeline->action_id == null || $timeline->action_id == $timeline->user_id )
-                                    ({{ $timeline->{'U_' . $name} }})
-                                @else
-                                    @lang("site.delegated")  :  {{App\Models\User::where("id",$timeline->action_id)->first()->name_ar}}
-                               @endif
-                            </h5>
+                                <h5>
+                                   @if ($timeline->action_id == null || $timeline->action_id == $timeline->user_id )
+                                        ({{ $timeline->{'U_' . $name} }})
+                                    @else
+                                        @lang("site.delegated")  :  {{App\Models\User::where("id",$timeline->action_id)->first()->name_ar}}
+                                   @endif
+                                </h5>
 
-                            <h5>
-                                @if ($timeline->approval_status == 'P')
-                                    @lang('site.approval_status_pending')
-                                    <i class="fas fa-spinner fa-pulse text-warning"></i>
-                                @elseif($timeline->approval_status == 'A')@lang('site.approval_status_approved')
-                                    <i class="fas fa-check text-success"></i>
-                                @elseif($timeline->approval_status == 'RV')@lang('site.approval_status_reverted')
-                                    <i class="fas fa-undo-alt text-danger"></i>
-                                @elseif($timeline->approval_status == 'RJ')@lang('site.approval_status_rejected')
-                                    <i class="fas fa-times text-danger"></i>
-                                @endif
-
-
-                            </h5>
-                            <h5>{{ Carbon\Carbon::parse($timeline->updated_at)->translatedFormat('d F Y || g:i:s A') }}
-                            </h5>
+                                <h5>
+                                    @if ($timeline->approval_status == 'P')
+                                        @lang('site.approval_status_pending')
+                                        <i class="fas fa-spinner fa-pulse text-warning"></i>
+                                    @elseif($timeline->approval_status == 'A')@lang('site.approval_status_approved')
+                                        <i class="fas fa-check text-success"></i>
+                                    @elseif($timeline->approval_status == 'RV')@lang('site.approval_status_reverted')
+                                        <i class="fas fa-undo-alt text-danger"></i>
+                                    @elseif($timeline->approval_status == 'RJ')@lang('site.approval_status_rejected')
+                                        <i class="fas fa-times text-danger"></i>
+                                    @endif
 
 
-                            </div>
+                                </h5>
+                                <h5>{{ Carbon\Carbon::parse($timeline->updated_at)->translatedFormat('d F Y || g:i:s A') }}
+                                </h5>
 
 
-                            @if ($timeline->comment )
-                            <h5 class="alert alert-warning">{{ $timeline->comment }} </h5>
+                                </div>
 
-                        @endif
+
+                                @if ($timeline->comment )
+                                <h5 class="alert alert-warning">{{ $timeline->comment }} </h5>
+
+                            @endif
                         @if ($timeline->comment_approve)
-                        <h5 class="alert alert-success">{{ $timeline->comment_approve }} </h5>
+                            <h5 class="alert alert-success">{{ $timeline->comment_approve }} </h5>
 
                         @endif
                         @endif
-
                         @endif
 
 
