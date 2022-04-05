@@ -184,15 +184,15 @@ class ApprovalCycleController extends Controller
                 $specification = $request->specification[$index];
             }
             if( $purchaseRequest->group_id == 1) {
-                $technical_office_id = 24;
+                $technical_office_id = 23;
                 $receive = $purchaseRequest->sector->head_id;
             } elseif( $purchaseRequest->group_id == 2) {
-                $technical_office_id = 27;
+                $technical_office_id = 36;
                 $receive = $purchaseRequest->sector->head_id;
 
             } elseif( $purchaseRequest->group_id == 4) {
                 $technical_office_id = 5;
-                $receive = 6;
+                $receive = 4;
             } elseif( $purchaseRequest->group_id == 7) {
                 $technical_office_id = 50;
                 $receive = $purchaseRequest->requester_id;
