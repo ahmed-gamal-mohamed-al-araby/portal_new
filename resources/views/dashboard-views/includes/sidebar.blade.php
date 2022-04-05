@@ -28,12 +28,12 @@ $child = $child ?? null;
                 </li>
 
                 {{-- Organization chart --}}
-                <!-- <li class="nav-item">
+                <li class="nav-item">
                     <a href="{{ route('organization.chart.index') }}" class="nav-link {{ $parent == 'organization' ? 'active' : '' }}">
                         <i class="nav-icon fas fa-sitemap"></i>
                         <p>@lang('site.Organization-chart')</p>
                     </a>
-                </li> -->
+                </li>
 
                 <li class="nav-header">@lang('site.Approvals')</li>
 

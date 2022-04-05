@@ -43,7 +43,7 @@ trait ApprovalCycleTrait
             ->join('approval_cycle_approval_steps', 'approval_cycle_approval_steps.id', '=', 'approval_timelines.approval_cycle_approval_step_id')
             ->join('approval_steps', 'approval_steps.id', '=', 'approval_cycle_approval_steps.approval_step_id')
             ->leftJoin('approval_timeline_comments', 'approval_timeline_comments.approval_timeline_id', '=', 'approval_timelines.id')
-            ->select('approval_steps.name_ar as AS_name_ar', "approval_timelines.user_id" , "approval_timelines.record_id" ,"approval_timelines.approval_cycle_approval_step_id" , "approval_timelines.action_id" , 'approval_steps.name_en  as AS_name_en', 'users.name_ar as U_name_ar', 'users.name_en as U_name_en',  'approval_timelines.updated_at', 'approval_timelines.approval_status', "approval_timeline_comments.comment_approve" , 'approval_timeline_comments.comment as comment')
+            ->select('approval_steps.name_ar as AS_name_ar', "approval_timelines.user_id" , "approval_timelines.record_id" ,"approval_timelines.approval_cycle_approval_step_id" , "approval_timelines.action_id" , 'approval_steps.name_en  as AS_name_en', 'users.name_ar as U_name_ar', 'users.name_en as U_name_en',  'approval_timelines.updated_at', 'approval_timelines.approval_status', "approval_timeline_comments.comment_approve" , 'approval_timeline_comments.comment as comment', 'users.sector_id')
             ->orderBy('updated_at')->get();
     }
 
