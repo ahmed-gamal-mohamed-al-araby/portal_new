@@ -386,9 +386,14 @@ $name = 'name_' . $currentLanguage;
 
 
                                     </div>
-                                    @if ($timeline->comment)
-                                                <h5 class="alert alert-warning">{{ $timeline->comment }}</h5>
-                                            @endif
+                                    @if ($timeline->comment )
+                                    <h5 class="alert alert-warning">{{ $timeline->comment }} </h5>
+
+                                @endif
+                            @if ($timeline->comment_approve)
+                                <h5 class="alert alert-success">{{ $timeline->comment_approve }} </h5>
+
+                            @endif
                                     @endif
                                 @endforeach
 
