@@ -307,24 +307,23 @@ $name = 'name_' . $currentLanguage;
                                 @endif
 
 
-                            </h5>
-                            <h5>{{ Carbon\Carbon::parse($timeline->updated_at)->translatedFormat('d F Y || g:i:s A') }}
-                            </h5>
+                                </h5>
+                                <h5>{{ Carbon\Carbon::parse($timeline->updated_at)->translatedFormat('d F Y || g:i:s A') }}
+                                </h5>
 
 
-                            </div>
+                                </div>
 
 
-                            @if ($timeline->comment )
-                            <h5 class="alert alert-warning">{{ $timeline->comment }} </h5>
+                                @if ($timeline->comment )
+                                <h5 class="alert alert-warning">{{ $timeline->comment }} </h5>
 
-                        @endif
+                            @endif
                         @if ($timeline->comment_approve)
-                        <h5 class="alert alert-success">{{ $timeline->comment_approve }} </h5>
+                            <h5 class="alert alert-success">{{ $timeline->comment_approve }} </h5>
 
                         @endif
                         @endif
-
 
 
                         @endforeach
