@@ -269,87 +269,42 @@ $name = 'name_' . $currentLanguage;
                             </h5>
                         </div>
                         @foreach ($timelines as $timeline)
-                           @if (App\Models\User::where("name_en", $timeline->{'U_name_en'})->first()->sector->name_en != "Business Development")
-                           @if (App\Models\User::where("name_en", $timeline->{'U_name_en'})->first()->sector->name_en == "Purchasing" && App\Models\User::where("name_en", $timeline->{'U_name_en'})->first()->manager == null )
-                                @php
-                                    $idBusiness = App\Models\ApprovalTimeline::where( "table_name" ,"purchase_requests")->where("record_id",$PurchaseRequest->id)->where("business_action",2)->first();
-                                @endphp
 
-                                @if ($idBusiness)
-                                        <div class="item d-flex">
+                        @php
+                            $approvelStepID  = App\Models\approvalCycleApprovalStep::find($timeline->approval_cycle_approval_step_id)->approval_step_id;
+                            $managerProject  = App\Models\approvalStep::find($approvelStepID)->code;
+                        @endphp
+                        @if ($managerProject != "PRO_M")
+                        <div class="item d-flex">
 
-                                           <h5>
-                                               @lang("site.business_development")
-                                           </h5>
+                            <h5>
+                                @if($timeline->sector_id != 20)
+                                {{ $timeline->{'AS_' . $name} }}
+                                @else
 
-                                           <h5>
-                                              {{-- @if ($timeline->action_id == null)
-                                                   ({{ $timeline->{'U_' . $name} }})
-                                               @else
-                                                   {{App\Models\User::where("id",$timeline->action_id)->first()->name_ar}}
-                                              @endif --}}
-                                              {{ $idBusiness->user->$name }}
-                                           </h5>
+                                @lang('site.business_development')
+                                @endif
+                            </h5>
 
-                                           <h5>
-                                               @if ($idBusiness->approval_status == 'P')
-                                                   @lang('site.approval_status_pending')
-                                                   <i class="fas fa-spinner fa-pulse text-warning"></i>
-                                               @elseif($idBusiness->approval_status == 'A')@lang('site.approval_status_approved')
-                                                   <i class="fas fa-check text-success"></i>
-                                               @elseif($idBusiness->approval_status == 'RV')@lang('site.approval_status_reverted')
-                                                   <i class="fas fa-undo-alt text-danger"></i>
-                                               @elseif($idBusiness->approval_status == 'RJ')@lang('site.approval_status_rejected')
-                                                   <i class="fas fa-times text-danger"></i>
-                                               @endif
-
-
-                                           </h5>
-                                           <h5>{{ Carbon\Carbon::parse($idBusiness->updated_at)->translatedFormat('d F Y || g:i:s A') }}
-                                           </h5>
-
-                                           @php
-                                            $approvalComment = App\Models\ApprovalTimelineComment::where("approval_timeline_id", $idBusiness->id)->first();
-                                           @endphp
-
-                                       </div>
-                                       @if ($approvalComment)
-                                           @if ( $approvalComment->comment || $approvalComment->comment_approve)
-                                             <h5 class="alert alert-warning"> {{ $approvalComment->comment}}  {{ $approvalComment->comment_approve}} </h5>
-                                           @endif
-                                       @endif
+                            <h5>
+                               @if ($timeline->action_id == null || $timeline->action_id == $timeline->user_id )
+                                    ({{ $timeline->{'U_' . $name} }})
+                                @else
+                                    @lang("site.delegated")  :  {{App\Models\User::where("id",$timeline->action_id)->first()->name_ar}}
                                @endif
-                            @endif
-                                @php
-                                    $approvelStepID  = App\Models\approvalCycleApprovalStep::find($timeline->approval_cycle_approval_step_id)->approval_step_id;
-                                    $managerProject  = App\Models\approvalStep::find($approvelStepID)->code;
-                                @endphp
-                            @if ($managerProject != "PRO_M")
-                            <div class="item d-flex">
+                            </h5>
 
-                                <h5>
-                                    {{ $timeline->{'AS_' . $name} }}
-                                </h5>
-
-                                <h5>
-                                   @if ($timeline->action_id == null || $timeline->action_id == $timeline->user_id )
-                                        ({{ $timeline->{'U_' . $name} }})
-                                    @else
-                                        @lang("site.delegated")  :  {{App\Models\User::where("id",$timeline->action_id)->first()->name_ar}}
-                                   @endif
-                                </h5>
-
-                                <h5>
-                                    @if ($timeline->approval_status == 'P')
-                                        @lang('site.approval_status_pending')
-                                        <i class="fas fa-spinner fa-pulse text-warning"></i>
-                                    @elseif($timeline->approval_status == 'A')@lang('site.approval_status_approved')
-                                        <i class="fas fa-check text-success"></i>
-                                    @elseif($timeline->approval_status == 'RV')@lang('site.approval_status_reverted')
-                                        <i class="fas fa-undo-alt text-danger"></i>
-                                    @elseif($timeline->approval_status == 'RJ')@lang('site.approval_status_rejected')
-                                        <i class="fas fa-times text-danger"></i>
-                                    @endif
+                            <h5>
+                                @if ($timeline->approval_status == 'P')
+                                    @lang('site.approval_status_pending')
+                                    <i class="fas fa-spinner fa-pulse text-warning"></i>
+                                @elseif($timeline->approval_status == 'A')@lang('site.approval_status_approved')
+                                    <i class="fas fa-check text-success"></i>
+                                @elseif($timeline->approval_status == 'RV')@lang('site.approval_status_reverted')
+                                    <i class="fas fa-undo-alt text-danger"></i>
+                                @elseif($timeline->approval_status == 'RJ')@lang('site.approval_status_rejected')
+                                    <i class="fas fa-times text-danger"></i>
+                                @endif
 
 
                                 </h5>
@@ -367,7 +322,6 @@ $name = 'name_' . $currentLanguage;
                         @if ($timeline->comment_approve)
                             <h5 class="alert alert-success">{{ $timeline->comment_approve }} </h5>
 
-                        @endif
                         @endif
                         @endif
 
