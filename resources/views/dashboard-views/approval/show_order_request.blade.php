@@ -501,7 +501,6 @@ $name = 'name_' . $currentLanguage;
                             </div>
 
                         </div>
-                        @if($purchaseOrder->with_holding)
                         <div class="row row-cols-6">
 
                             <div class="col-6">
@@ -517,7 +516,6 @@ $name = 'name_' . $currentLanguage;
                             </div>
 
                         </div>
-                        @endif
                         <div class="row row-cols-6">
                             <div class="col-6">
                                 <div class="input-group-prepend">
