@@ -14,7 +14,7 @@ class InquiryPurchaseRequest extends Model
 
     public function itemRequest()
     {
-        return $this->belongsTo("App\Models\itemRequest","item_request_id");
+        return $this->belongsTo("App\Models\ItemRequest","item_request_id");
     }
 
 
